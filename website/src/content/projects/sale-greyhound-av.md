@@ -1,13 +1,13 @@
 ---
-title: Sale Greyhound Club — AV upgrade
+title: Sale Greyhound Racing Club — TAB & gaming bar renovation
 slug: sale-greyhound-av
-client: Sale Greyhound Club
+client: Sale Greyhound Racing Club
 category: hospitality
-services: [audio-visual, electrical]
+services: [electrical, audio-visual, communications]
 year: 2024
 featured: true
 heroImage: /projects/sale-greyhound/hero.jpg
 gallery: []
 ---
 
-A full audio-visual refit covering the main bar, function spaces, and viewing areas. New screens, multi-zone audio, and Sky Racing distribution running to every display.
+A full renovation of the TAB and gaming bar. New electrical layout for the room, multi-zone audio so race calling carries cleanly, screens and Sky Racing distribution running to every viewing position, and the comms backbone to keep the EFTPOS and gaming machines online.

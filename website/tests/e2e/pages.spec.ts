@@ -18,7 +18,7 @@ for (const p of pages) {
     const res = await page.goto(p.path);
     expect(res?.status()).toBeLessThan(400);
     await expect(page).toHaveTitle(p.title);
-    await expect(page.locator("header a", { hasText: "GOODALL" })).toBeVisible();
+    await expect(page.locator('header img[alt="Goodall Electrical"]')).toBeVisible();
     await expect(page.locator("footer")).toContainText("ACN 684 711 224");
   });
 }

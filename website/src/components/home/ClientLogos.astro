@@ -2,23 +2,44 @@
 import Container from "../ui/Container.astro";
 
 const clients = [
-  "Sporting Legends",
-  "Star Hotel",
-  "Greyhound Racing Victoria",
-  "Maffra Community Sports Club",
-  "The Vines on Avon",
-  "Wonthaggi Workmen's",
+  { name: "Sporting Legends",            src: "/logos/sporting-legends.webp" },
+  { name: "Star Hotel",                  src: "/logos/star-hotel.png" },
+  { name: "Greyhound Racing Victoria",   src: "/logos/greyhound-racing-victoria.png" },
+  { name: "Maffra Community Sports Club", src: "/logos/maffra-community-sports-club.png" },
+  { name: "The Vines on Avon",           src: "/logos/the-vines-on-avon.png" },
+  { name: "Wonthaggi Workmen's",         src: "/logos/wonthaggi-workmens.png" },
 ];
 ---
-<section class="py-12 border-b border-ink-800">
+<section class="py-16 md:py-20 border-b border-ink-800 bg-ink-950">
   <Container>
     <p class="text-bone-400 text-xs font-bold tracking-[0.3em] uppercase text-center">Trusted by venues across Gippsland</p>
-    <ul class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
-      {clients.map((name) => (
-        <li class="border border-ink-800 px-4 py-6 text-center text-bone-200 text-sm font-semibold tracking-wide hover:border-spark-500 hover:text-bone-50 transition-colors">
-          {name}
+    <ul class="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 md:gap-10 items-center">
+      {clients.map((c) => (
+        <li class="flex items-center justify-center">
+          <img
+            src={c.src}
+            alt={c.name}
+            loading="lazy"
+            class="client-logo h-12 md:h-16 w-auto max-w-[140px] object-contain"
+          />
         </li>
       ))}
     </ul>
   </Container>
 </section>
+
+<style>
+  .client-logo {
+    filter: brightness(0) invert(1) opacity(0.55);
+    transition: filter 200ms ease, transform 200ms ease;
+  }
+  .client-logo:hover {
+    filter: none;
+    transform: scale(1.05);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .client-logo { transition: none; }
+    .client-logo:hover { transform: none; }
+  }
+</style>

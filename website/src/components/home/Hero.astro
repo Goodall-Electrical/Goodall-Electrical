@@ -2,20 +2,192 @@
 import Container from "../ui/Container.astro";
 import Button from "../ui/Button.astro";
 ---
-<section class="relative border-b border-ink-800">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_45%)] opacity-10"></div>
-  <Container class="relative py-24 md:py-32">
-    <p class="text-spark-500 tracking-[0.3em] text-xs font-semibold">SALE, VIC // ACN 684 711 224</p>
-    <h1 class="mt-6 text-5xl md:text-7xl font-extrabold tracking-tight leading-[0.95]">
-      Power<br />
-      for the <span class="text-spark-500">pros.</span>
+<section class="hero relative overflow-hidden border-b border-ink-800">
+  <!-- Animated grid background -->
+  <div class="hero-grid absolute inset-0 opacity-[0.07]" aria-hidden="true"></div>
+
+  <!-- Slow-pulsing radial glow -->
+  <div class="hero-glow absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full blur-3xl opacity-20" aria-hidden="true"></div>
+
+  <!-- Vertical yellow stripe with travelling highlight -->
+  <div class="hero-stripe absolute top-0 bottom-0 left-0 w-[2px] bg-spark-500/30" aria-hidden="true">
+    <span class="hero-stripe-pulse"></span>
+  </div>
+
+  <!-- Lightning bolt SVG, flashes occasionally -->
+  <svg class="hero-bolt absolute right-4 md:right-16 top-12 md:top-20 w-32 md:w-64 h-auto text-spark-500/15 pointer-events-none" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M13 0L3 14h7l-1 10 11-16h-7z"></path>
+  </svg>
+
+  <Container class="relative py-24 md:py-36">
+    <div class="flex items-center gap-3 hero-fade" style="--delay: 0ms">
+      <span class="relative flex h-2 w-2">
+        <span class="absolute inline-flex h-full w-full rounded-full bg-spark-500 opacity-75 hero-ping"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-spark-500"></span>
+      </span>
+      <p class="text-spark-500 tracking-[0.3em] text-xs font-semibold">AVAILABLE NOW · SALE, VIC · ACN 684 711 224</p>
+    </div>
+
+    <h1 class="mt-6 text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95]">
+      <span class="hero-fade block" style="--delay: 120ms">Power</span>
+      <span class="hero-fade block" style="--delay: 240ms">for the <span class="hero-accent">pros.</span></span>
     </h1>
-    <p class="mt-6 text-bone-200 max-w-xl text-lg">
+
+    <p class="mt-8 text-bone-200 max-w-xl text-lg md:text-xl hero-fade" style="--delay: 380ms">
       Commercial-grade electrical, audio visual, automation and communications work across Gippsland — from venues and pubs to family homes.
     </p>
-    <div class="mt-8 flex flex-wrap gap-3">
+
+    <div class="mt-10 flex flex-wrap gap-3 hero-fade" style="--delay: 500ms">
       <Button href="/quote">Get a quote</Button>
       <Button href="/projects" variant="ghost">See our work</Button>
     </div>
+
+    <!-- Stats strip -->
+    <div class="mt-16 md:mt-24 grid grid-cols-3 gap-px bg-ink-700 border border-ink-700 hero-fade max-w-2xl" style="--delay: 620ms">
+      <div class="bg-ink-950 px-5 py-5">
+        <p class="text-spark-500 font-extrabold text-2xl md:text-3xl">5</p>
+        <p class="mt-1 text-bone-400 text-xs tracking-[0.15em] uppercase">Disciplines</p>
+      </div>
+      <div class="bg-ink-950 px-5 py-5">
+        <p class="text-spark-500 font-extrabold text-2xl md:text-3xl">24/7</p>
+        <p class="mt-1 text-bone-400 text-xs tracking-[0.15em] uppercase">Emergency</p>
+      </div>
+      <div class="bg-ink-950 px-5 py-5">
+        <p class="text-spark-500 font-extrabold text-2xl md:text-3xl">Gippsland</p>
+        <p class="mt-1 text-bone-400 text-xs tracking-[0.15em] uppercase">Service area</p>
+      </div>
+    </div>
   </Container>
+
+  <!-- Marquee of capabilities -->
+  <div class="hero-marquee relative border-t border-ink-800 bg-ink-900/50 backdrop-blur-sm overflow-hidden">
+    <div class="hero-marquee-track flex items-center gap-12 py-4 whitespace-nowrap text-bone-400 text-sm tracking-[0.3em] uppercase font-semibold">
+      {Array(2).fill(0).map(() => (
+        <>
+          <span>Electrical</span>
+          <span class="text-spark-500">⚡</span>
+          <span>Audio Visual</span>
+          <span class="text-spark-500">⚡</span>
+          <span>Control &amp; Automation</span>
+          <span class="text-spark-500">⚡</span>
+          <span>Communications</span>
+          <span class="text-spark-500">⚡</span>
+          <span>TV Antennas</span>
+          <span class="text-spark-500">⚡</span>
+          <span>Hospitality fitouts</span>
+          <span class="text-spark-500">⚡</span>
+          <span>Maintenance contracts</span>
+          <span class="text-spark-500">⚡</span>
+        </>
+      ))}
+    </div>
+  </div>
 </section>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(255, 214, 10, 0.08), transparent 50%),
+      linear-gradient(180deg, var(--color-ink-950) 0%, var(--color-ink-900) 100%);
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(var(--color-spark-500) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-spark-500) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 30% 50%, black 0%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at 30% 50%, black 0%, transparent 75%);
+  }
+
+  .hero-glow {
+    background: radial-gradient(circle, var(--color-spark-500), transparent 70%);
+    animation: glow-pulse 6s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.18; }
+    50%      { transform: scale(1.1); opacity: 0.28; }
+  }
+
+  .hero-stripe-pulse {
+    position: absolute;
+    top: 0;
+    left: -1px;
+    width: 4px;
+    height: 25%;
+    background: linear-gradient(180deg, transparent, var(--color-spark-500), transparent);
+    filter: blur(2px);
+    animation: stripe-travel 5s linear infinite;
+  }
+  @keyframes stripe-travel {
+    0%   { transform: translateY(-100%); }
+    100% { transform: translateY(400%); }
+  }
+
+  .hero-bolt {
+    animation: bolt-flicker 7s infinite;
+    transform-origin: center;
+  }
+  @keyframes bolt-flicker {
+    0%, 92%, 100% { opacity: 0.15; }
+    93%           { opacity: 0.55; filter: drop-shadow(0 0 24px var(--color-spark-500)); }
+    94%           { opacity: 0.10; }
+    95%           { opacity: 0.65; filter: drop-shadow(0 0 32px var(--color-spark-500)); }
+    96%           { opacity: 0.15; }
+  }
+
+  .hero-fade {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: hero-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    animation-delay: var(--delay, 0ms);
+  }
+  @keyframes hero-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-accent {
+    color: var(--color-spark-500);
+    position: relative;
+    display: inline-block;
+  }
+  .hero-accent::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.1em;
+    height: 0.12em;
+    background: var(--color-spark-500);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: underline-grow 800ms cubic-bezier(0.2, 0.7, 0.2, 1) 700ms forwards;
+  }
+  @keyframes underline-grow {
+    to { transform: scaleX(1); }
+  }
+
+  .hero-ping {
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes ping {
+    75%, 100% { transform: scale(2.5); opacity: 0; }
+  }
+
+  .hero-marquee-track {
+    animation: marquee 35s linear infinite;
+    width: max-content;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-glow, .hero-stripe-pulse, .hero-bolt, .hero-fade, .hero-accent::after, .hero-ping, .hero-marquee-track {
+      animation: none !important;
+    }
+    .hero-fade { opacity: 1; transform: none; }
+    .hero-accent::after { transform: scaleX(1); }
+  }
+</style>

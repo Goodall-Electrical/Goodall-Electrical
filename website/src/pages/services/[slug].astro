@@ -8,10 +8,13 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const services = await getCollection("services");
-  return services.map((service) => ({
-    params: { slug: service.data.slug },
-    props: { service },
-  }));
+  // /services/antennas is a custom landing page (services/antennas.astro)
+  return services
+    .filter((s) => s.data.slug !== "antennas")
+    .map((service) => ({
+      params: { slug: service.data.slug },
+      props: { service },
+    }));
 }
 
 const { service } = Astro.props;

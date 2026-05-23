@@ -1,0 +1,217 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import { antennaTowns } from "../../data/antenna-towns";
+
+export const prerender = true;
+
+const title = "TV Antenna Installation & Repair — Gippsland Homes | Goodall Electrical";
+const description = "Residential TV antenna installation, repair and signal tuning across Gippsland. Same-day service to Sale, Maffra, Traralgon, Bairnsdale, Wonthaggi and surrounds. Call 03 4130 5009.";
+
+const problems = [
+  { title: "No signal or pixelated picture", body: "Bad signal is usually a misaligned antenna, a dead amplifier, or a splitter that's quietly failed. We diagnose with a signal meter, not guesswork." },
+  { title: "Reception drops in storms or wind", body: "Loose mounts, water in connectors, or a tired antenna in a fringe area. We replace the weak point — not the whole system." },
+  { title: "Some TVs work, others don't", body: "Usually a distribution problem — a bad splitter, weak amplifier, or a cable run that's been chewed up. We trace it room by room." },
+  { title: "Adding a TV to a new room", body: "Need a point in the bedroom, garage or extension? We pull cable, terminate the wall plate and balance the signal so the existing TVs still run clean." },
+  { title: "Storm damage and insurance jobs", body: "Antenna down? We replace, document, and provide an itemised invoice that works for your insurer." },
+];
+
+const services = [
+  "New TV antenna installation",
+  "Replacing damaged or storm-affected antennas",
+  "Signal-meter diagnosis for reception faults",
+  "Adding TV points to bedrooms, garages and extensions",
+  "Wall-plate installation and tidy cable runs",
+  "Amplifier and splitter replacement / balancing",
+  "Foxtel and streaming source distribution at home",
+  "Insurance reports and itemised invoicing",
+];
+
+const towns = antennaTowns;
+
+const faqs = [
+  {
+    q: "Do you offer same-day antenna service?",
+    a: "For most of central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale — yes, when we have a van free. Call 03 4130 5009 and we'll give you a straight answer.",
+  },
+  {
+    q: "How much does a new TV antenna installation cost?",
+    a: "Most domestic installs come in between a few hundred dollars and around a thousand, depending on the antenna spec, mast height, cable runs, wall-plate work and whether existing distribution needs replacing. We quote on site so there are no surprises.",
+  },
+  {
+    q: "Can you fix my reception without replacing the antenna?",
+    a: "Often yes. Many reception problems are a failed amplifier, water in a connector, a bad splitter or a misaligned antenna — all fixable for far less than a full replacement. We diagnose with a signal meter before recommending parts.",
+  },
+  {
+    q: "Can you add a TV point to another room?",
+    a: "Yes. We pull the cable, terminate the wall plate, and rebalance the existing distribution so the new point doesn't pull signal from the rest of the house.",
+  },
+  {
+    q: "My antenna came down in a storm — can you handle insurance?",
+    a: "Yes. We replace the antenna, document the job, and provide an itemised invoice and (if needed) a written report your insurer can use.",
+  },
+  {
+    q: "What areas do you cover?",
+    a: "All of Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale, Yarram, Traralgon, Morwell, Bairnsdale, Lakes Entrance, Wonthaggi, Warragul and surrounds. If you're not sure, call us.",
+  },
+];
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Residential TV Antenna Installation & Repair",
+  "audience": { "@type": "Audience", "audienceType": "Homeowners" },
+  "provider": {
+    "@type": "Electrician",
+    "name": "Goodall Electrical",
+    "telephone": "+61341305009",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Unit 5/9 Wellington Park Way",
+      "addressLocality": "Sale",
+      "addressRegion": "VIC",
+      "addressCountry": "AU",
+    },
+  },
+  "areaServed": towns.map((t) => ({ "@type": "City", "name": t.name })),
+  "url": new URL("/services/antennas", Astro.site).toString(),
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+---
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-28">
+      <a href="/services" class="text-spark-500 text-sm font-semibold">← All services</a>
+      <p class="mt-6 text-spark-500 tracking-[0.3em] text-xs font-bold">RESIDENTIAL · TV ANTENNAS · GIPPSLAND</p>
+      <h1 class="mt-3 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1]">
+        TV antenna installation<br />and repair for <span class="text-spark-500">Gippsland homes.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        New antenna installs, storm damage, reception fixes and extra TV points — straight to your house, with proper signal-meter diagnosis and a no-surprises quote.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/quote">Book an antenna job</Button>
+        <a href="tel:0341305009" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
+          Call 03 4130 5009
+        </a>
+      </div>
+      <ul class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl text-sm text-bone-200">
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Same-day in central Gippsland</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Signal-meter diagnosis</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Insurance jobs handled</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Fully licensed & insured</li>
+      </ul>
+    </Container>
+  </section>
+
+  <!-- COMMON PROBLEMS -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="COMMON PROBLEMS" title="Reception trouble we fix every week." description="Half of antenna call-outs aren't a bad antenna — they're something smaller and cheaper. We diagnose first, then quote." />
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {problems.map((p) => (
+          <div class="border border-ink-800 bg-ink-900 p-6 hover:border-spark-500 transition-colors">
+            <h3 class="text-lg font-bold">{p.title}</h3>
+            <p class="mt-3 text-bone-200 text-sm leading-relaxed">{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <SectionHeading eyebrow="WHAT WE DO" title="Antenna work for Gippsland homes." />
+          <p class="mt-6 text-bone-200">Domestic antenna work is the kind of job where the difference between a quick fix and a fix that lasts comes down to experience. We do this every week — across homes from Sale to Lakes Entrance.</p>
+          <div class="mt-8 flex gap-3">
+            <Button href="/quote">Get a quote</Button>
+            <Button href="/projects" variant="ghost">See our work</Button>
+          </div>
+        </div>
+        <ul class="space-y-3">
+          {services.map((s) => (
+            <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
+              <span class="text-spark-500 font-bold mt-0.5">→</span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- SERVICE AREAS -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="SERVICE AREAS" title="Residential antenna service across Gippsland." description="Pick your town for local pricing, common reception issues in your area, and call-out availability." />
+      <div class="mt-12 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+        {towns.map((t) => (
+          <a
+            href={`/services/antennas/${t.slug}`}
+            class="group bg-ink-950 p-5 hover:bg-ink-900 transition-colors flex flex-col justify-between min-h-[140px]"
+          >
+            <div>
+              <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">Antennas in</p>
+              <h3 class="mt-1 text-xl font-bold">{t.name}</h3>
+              <p class="mt-2 text-bone-400 text-sm leading-snug">{t.teaser}</p>
+            </div>
+            <span class="mt-4 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">View →</span>
+          </a>
+        ))}
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">Don't see your town? Call <a href="tel:0341305009" class="text-spark-500 font-semibold">03 4130 5009</a> — we cover all of Gippsland.</p>
+    </Container>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow="FAQ" title="Antenna questions, answered straight." />
+      <div class="mt-12 space-y-3">
+        {faqs.map((f) => (
+          <details class="border border-ink-800 bg-ink-900 group">
+            <summary class="px-6 py-4 cursor-pointer text-bone-50 font-semibold flex items-center justify-between gap-4 hover:bg-ink-800 transition-colors">
+              <span>{f.q}</span>
+              <span class="text-spark-500 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+            </summary>
+            <div class="px-6 pb-5 text-bone-200 leading-relaxed">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">BOOK A JOB</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Lost signal? Adding a TV?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">Tell us the basics — address, what's not working, how many rooms. We'll come back with a quote, or roll a van out same-day if we can.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href="/quote" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href="tel:0341305009" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5009</a>
+      </div>
+    </Container>
+  </section>
+</Base>

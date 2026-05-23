@@ -1,0 +1,246 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Container from "../../../components/ui/Container.astro";
+import Button from "../../../components/ui/Button.astro";
+import SectionHeading from "../../../components/ui/SectionHeading.astro";
+import { antennaTowns, type AntennaTown } from "../../../data/antenna-towns";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return antennaTowns.map((town) => ({
+    params: { town: town.slug },
+    props: { town },
+  }));
+}
+
+interface Props { town: AntennaTown; }
+const { town } = Astro.props;
+
+const title = `TV Antenna Installation & Repair in ${town.name} | Goodall Electrical`;
+const description = `Residential TV antenna installation, repair and signal tuning in ${town.name} (${town.postcode ?? "Gippsland"}). Same-day service where possible. Call 03 4130 5009.`;
+
+// Shared FAQ list, lightly customised with the town name.
+const faqs = [
+  {
+    q: `How quickly can you get to a job in ${town.name}?`,
+    a: `For central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale and surrounds — we can often do same-day. ${town.name} is on our regular run; call 03 4130 5009 and we'll give you a straight answer on timing.`,
+  },
+  {
+    q: `How much does a new TV antenna install cost in ${town.name}?`,
+    a: "Most domestic installs land between a few hundred dollars and around a thousand, depending on antenna spec, mast height, cable runs and existing distribution. We quote on site so there are no surprises.",
+  },
+  {
+    q: "Can you fix reception without replacing the antenna?",
+    a: "Often yes. Many reception problems are a failed amplifier, water in a connector, a bad splitter or a misaligned antenna — fixable for far less than a full replacement. We diagnose with a signal meter before recommending parts.",
+  },
+  {
+    q: "Can you add a TV point to another room?",
+    a: "Yes. We pull the cable, terminate the wall plate, and rebalance the existing distribution so the new point doesn't pull signal from the rest of the house.",
+  },
+  {
+    q: "My antenna came down in a storm — can you handle insurance?",
+    a: "Yes. We replace the antenna, document the job and provide an itemised invoice and (if needed) a written report your insurer can use.",
+  },
+];
+
+// Local schema for each town page.
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Residential TV Antenna Installation & Repair",
+  "audience": { "@type": "Audience", "audienceType": "Homeowners" },
+  "provider": {
+    "@type": "Electrician",
+    "name": "Goodall Electrical",
+    "telephone": "+61341305009",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Unit 5/9 Wellington Park Way",
+      "addressLocality": "Sale",
+      "addressRegion": "VIC",
+      "addressCountry": "AU",
+    },
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": town.name,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": town.name,
+      "postalCode": town.postcode,
+      "addressRegion": "VIC",
+      "addressCountry": "AU",
+    },
+  },
+  "url": new URL(`/services/antennas/${town.slug}`, Astro.site).toString(),
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", position: 1, name: "Services", item: new URL("/services", Astro.site).toString() },
+    { "@type": "ListItem", position: 2, name: "TV Antennas", item: new URL("/services/antennas", Astro.site).toString() },
+    { "@type": "ListItem", position: 3, name: town.name, item: new URL(`/services/antennas/${town.slug}`, Astro.site).toString() },
+  ],
+};
+
+const nearbyTowns = town.nearby
+  .map((slug) => antennaTowns.find((t) => t.slug === slug))
+  .filter((t): t is AntennaTown => Boolean(t));
+---
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)}></script>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-24">
+      <nav class="text-bone-400 text-sm flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
+        <a href="/services" class="hover:text-spark-500">Services</a>
+        <span>/</span>
+        <a href="/services/antennas" class="hover:text-spark-500">TV Antennas</a>
+        <span>/</span>
+        <span class="text-bone-200">{town.name}</span>
+      </nav>
+      <p class="mt-6 text-spark-500 tracking-[0.3em] text-xs font-bold">{town.region.toUpperCase()}{town.postcode ? ` · ${town.postcode}` : ""}</p>
+      <h1 class="mt-3 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1]">
+        TV antenna installation<br />and repair in <span class="text-spark-500">{town.name}.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        {town.intro}
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href={`/quote?service=antennas&town=${town.slug}`}>Book a {town.name} job</Button>
+        <a href="tel:0341305009" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
+          Call 03 4130 5009
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- LOCAL CONTEXT -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow={`ANTENNAS IN ${town.name.toUpperCase()}`} title={`What ${town.name} antenna work looks like.`} />
+      <div class="mt-8 text-bone-200 text-lg leading-relaxed">
+        {town.context}
+      </div>
+
+      <h3 class="mt-12 text-xs font-bold tracking-[0.2em] uppercase text-spark-500">Common in {town.name}</h3>
+      <ul class="mt-4 space-y-3">
+        {town.localIssues.map((issue) => (
+          <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
+            <span class="text-spark-500 font-bold mt-0.5">→</span>
+            <span>{issue}</span>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <!-- WHAT WE DO (short, town-scoped) -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <SectionHeading eyebrow="WHAT WE DO" title={`Antenna service for ${town.name} homes.`} />
+          <p class="mt-6 text-bone-200">
+            From a quick fault-find through to a full new install on a new build, we cover the lot — properly, with no upselling and no guesswork.
+          </p>
+          <div class="mt-8 flex gap-3">
+            <Button href={`/quote?service=antennas&town=${town.slug}`}>Get a quote</Button>
+            <Button href="/services/antennas" variant="ghost">All antenna info</Button>
+          </div>
+        </div>
+        <ul class="space-y-3">
+          {[
+            `New TV antenna installation in ${town.name}`,
+            "Replacing damaged or storm-affected antennas",
+            "Signal-meter diagnosis for reception faults",
+            `Adding TV points around your ${town.name} home`,
+            "Wall-plate installation and tidy cable runs",
+            "Amplifier and splitter replacement / balancing",
+            "Foxtel and streaming source distribution at home",
+            "Insurance reports and itemised invoicing",
+          ].map((s) => (
+            <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
+              <span class="text-spark-500 font-bold mt-0.5">→</span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- NEARBY TOWNS -->
+  {nearbyTowns.length > 0 && (
+    <section class="py-20 border-b border-ink-800">
+      <Container>
+        <SectionHeading eyebrow="NEARBY" title={`Other towns we cover near ${town.name}.`} />
+        <div class="mt-12 grid sm:grid-cols-2 md:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+          {nearbyTowns.map((t) => (
+            <a
+              href={`/services/antennas/${t.slug}`}
+              class="group bg-ink-950 p-5 hover:bg-ink-900 transition-colors flex flex-col justify-between min-h-[140px]"
+            >
+              <div>
+                <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">Antennas in</p>
+                <h3 class="mt-1 text-xl font-bold">{t.name}</h3>
+                <p class="mt-2 text-bone-400 text-sm leading-snug">{t.teaser}</p>
+              </div>
+              <span class="mt-4 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">View →</span>
+            </a>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow="FAQ" title={`Antenna questions, answered for ${town.name}.`} />
+      <div class="mt-12 space-y-3">
+        {faqs.map((f) => (
+          <details class="border border-ink-800 bg-ink-900 group">
+            <summary class="px-6 py-4 cursor-pointer text-bone-50 font-semibold flex items-center justify-between gap-4 hover:bg-ink-800 transition-colors">
+              <span>{f.q}</span>
+              <span class="text-spark-500 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+            </summary>
+            <div class="px-6 pb-5 text-bone-200 leading-relaxed">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">BOOK A {town.name.toUpperCase()} JOB</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Antenna work in {town.name}?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">Tell us the basics — address, what's not working, how many rooms. We'll come back with a quote, or roll a van out same-day if we can.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href={`/quote?service=antennas&town=${town.slug}`} class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href="tel:0341305009" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5009</a>
+      </div>
+    </Container>
+  </section>
+</Base>
