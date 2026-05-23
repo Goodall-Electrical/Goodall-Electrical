@@ -10,6 +10,10 @@ interface Props {
 }
 const { title, description = "Commercial and residential electrical, AV, automation, communications and antenna services across Gippsland.", ogImage = "/og-default.jpg" } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+// OG/Twitter image is built against the REQUEST origin (not Astro.site)
+// so the URL is always reachable — works for LAN testing, staging, and
+// production all the same.
+const ogImageUrl = new URL(ogImage, Astro.url.origin).toString();
 ---
 <!doctype html>
 <html lang="en-AU">
@@ -25,14 +29,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL(ogImage, Astro.site).toString()} />
+    <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Goodall Electrical — Wired for Gippsland." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL(ogImage, Astro.site).toString()} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
