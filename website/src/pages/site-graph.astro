@@ -8,8 +8,6 @@ import { electricalTowns } from "../data/electrical-towns";
 
 export const prerender = true;
 
-// ── Node/edge model ─────────────────────────────────────────────────
-// Categories drive node colour + the legend below.
 type Group =
   | "core"
   | "service-hub"
@@ -20,34 +18,31 @@ type Group =
   | "project"
   | "meta";
 
-interface Node { id: string; label: string; group: Group; }
+interface Node { id: string; label: string; group: Group; level?: number; }
 interface Edge { from: string; to: string; }
 
 const nodes: Node[] = [];
 const edges: Edge[] = [];
 const seen = new Set<string>();
 
-function n(id: string, label: string, group: Group) {
+function n(id: string, label: string, group: Group, level?: number) {
   if (seen.has(id)) return;
   seen.add(id);
-  nodes.push({ id, label, group });
+  nodes.push({ id, label, group, level });
 }
-function e(from: string, to: string) {
-  edges.push({ from, to });
-}
+function e(from: string, to: string) { edges.push({ from, to }); }
 
-// ── Static / core pages ────────────────────────────────────────────
-n("/",             "Home",          "core");
-n("/about",        "About",         "core");
-n("/contact",      "Contact",       "core");
-n("/projects",     "Projects",      "core");
-n("/testimonials", "Testimonials",  "core");
-n("/blog",         "Blog",          "core");
-n("/areas",        "Service Areas", "core");
-n("/services",     "Services",      "core");
-n("/sitemap",      "Sitemap",       "meta");
+// Levels drive the hierarchical layout (lower = closer to root)
+n("/",             "Home",          "core",  0);
+n("/services",     "Services",      "core",  1);
+n("/areas",        "Service Areas", "core",  1);
+n("/blog",         "Blog",          "core",  1);
+n("/projects",     "Projects",      "core",  1);
+n("/about",        "About",         "core",  1);
+n("/contact",      "Contact",       "core",  4);
+n("/testimonials", "Testimonials",  "core",  1);
+n("/sitemap",      "Sitemap",       "meta",  1);
 
-// ── Service hubs ──────────────────────────────────────────────────
 const serviceHubs = [
   { slug: "electrical",         label: "Electrical" },
   { slug: "audio-visual",       label: "Audio Visual" },
@@ -55,58 +50,35 @@ const serviceHubs = [
   { slug: "communications",     label: "Communications" },
   { slug: "antennas",           label: "TV Antennas" },
 ];
-for (const s of serviceHubs) n(`/services/${s.slug}`, s.label, "service-hub");
+for (const s of serviceHubs) n(`/services/${s.slug}`, s.label, "service-hub", 2);
+for (const t of towns)         n(`/areas/${t.slug}`,            t.name,                "area-hub",        2);
+for (const t of antennaTowns)  n(`/services/antennas/${t.slug}`,   `${t.name} (Antennas)`,   "antenna-town",    3);
+for (const t of electricalTowns) n(`/services/electrical/${t.slug}`, `${t.name} (Electrical)`, "electrical-town", 3);
 
-// ── Areas (town hubs) ────────────────────────────────────────────
-for (const t of towns) n(`/areas/${t.slug}`, t.name, "area-hub");
-
-// ── Per-town antenna pages ───────────────────────────────────────
-for (const t of antennaTowns) n(`/services/antennas/${t.slug}`, `${t.name} · Antennas`, "antenna-town");
-
-// ── Per-town electrical pages ────────────────────────────────────
-for (const t of electricalTowns) n(`/services/electrical/${t.slug}`, `${t.name} · Electrical`, "electrical-town");
-
-// ── Blog posts ───────────────────────────────────────────────────
 const posts = await getCollection("posts");
-for (const p of posts) n(`/blog/${p.data.slug}`, p.data.title, "blog");
+for (const p of posts) n(`/blog/${p.data.slug}`, p.data.title, "blog", 2);
 
-// ── Project pages ────────────────────────────────────────────────
 const projects = await getCollection("projects");
-for (const p of projects) n(`/projects/${p.data.slug}`, p.data.title, "project");
+for (const p of projects) n(`/projects/${p.data.slug}`, p.data.title, "project", 2);
 
-// ── Edges (content links — excludes universal header/footer) ─────
+// Edges (content links only)
+e("/", "/contact");
+for (const s of serviceHubs) e("/", `/services/${s.slug}`);
+for (const p of projects.filter((x) => x.data.featured)) e("/", `/projects/${p.data.slug}`);
 
-// Home page hero + sections
-e("/", "/contact");          // Get a quote CTA
-for (const s of serviceHubs) e("/", `/services/${s.slug}`);  // services snapshot tiles
-for (const p of projects.filter((x) => x.data.featured)) e("/", `/projects/${p.data.slug}`);  // featured projects
-
-// Services hub → each service hub
 for (const s of serviceHubs) e("/services", `/services/${s.slug}`);
+for (const s of serviceHubs) { e(`/services/${s.slug}`, "/contact"); e(`/services/${s.slug}`, "/projects"); }
 
-// Per-service hubs
-for (const s of serviceHubs) {
-  e(`/services/${s.slug}`, "/contact");          // quote CTA
-  e(`/services/${s.slug}`, "/projects");         // see our work
-}
-// Antennas → 20 town pages
 for (const t of antennaTowns) e("/services/antennas", `/services/antennas/${t.slug}`);
-// Electrical → 20 town pages
 for (const t of electricalTowns) e("/services/electrical", `/services/electrical/${t.slug}`);
-// AV pulls AV-tagged projects
-for (const p of projects.filter((x) => x.data.services.includes("audio-visual"))) {
-  e("/services/audio-visual", `/projects/${p.data.slug}`);
-}
+for (const p of projects.filter((x) => x.data.services.includes("audio-visual"))) e("/services/audio-visual", `/projects/${p.data.slug}`);
 
-// Per-town antenna pages → 4 nearby antenna town pages + back to hub + contact
 for (const t of antennaTowns) {
   const me = `/services/antennas/${t.slug}`;
   e(me, "/services/antennas");
   e(me, "/contact");
   for (const slug of t.nearby) e(me, `/services/antennas/${slug}`);
 }
-
-// Per-town electrical pages → 4 nearby + back to hub + contact
 for (const t of electricalTowns) {
   const me = `/services/electrical/${t.slug}`;
   e(me, "/services/electrical");
@@ -114,88 +86,89 @@ for (const t of electricalTowns) {
   for (const slug of t.nearby) e(me, `/services/electrical/${slug}`);
 }
 
-// Areas index → 20 area hubs
 for (const t of towns) e("/areas", `/areas/${t.slug}`);
 
-// Each areas/<town> → 5 services (service-town page where it exists, else service hub) + 4 nearby areas + contact
 const antennaSlugs = new Set(antennaTowns.map((t) => t.slug));
 const electricalSlugs = new Set(electricalTowns.map((t) => t.slug));
 for (const t of towns) {
   const me = `/areas/${t.slug}`;
   e(me, "/contact");
-  // Electrical → town-specific if exists
   e(me, electricalSlugs.has(t.slug) ? `/services/electrical/${t.slug}` : "/services/electrical");
-  // Antennas → town-specific if exists
   e(me, antennaSlugs.has(t.slug) ? `/services/antennas/${t.slug}` : "/services/antennas");
-  // AV / Automation / Comms → hub only
   e(me, "/services/audio-visual");
   e(me, "/services/control-automation");
   e(me, "/services/communications");
-  // Nearby town hubs
   for (const slug of t.nearby) e(me, `/areas/${slug}`);
 }
 
-// Projects index → each project
 for (const p of projects) e("/projects", `/projects/${p.data.slug}`);
-// Project pages → contact + back to projects
-for (const p of projects) {
-  const me = `/projects/${p.data.slug}`;
-  e(me, "/contact");
-  e(me, "/projects");
-}
+for (const p of projects) { e(`/projects/${p.data.slug}`, "/contact"); e(`/projects/${p.data.slug}`, "/projects"); }
 
-// Blog index → each post
 for (const p of posts) e("/blog", `/blog/${p.data.slug}`);
-// Blog posts → contact + related posts (same category)
 for (const p of posts) {
   const me = `/blog/${p.data.slug}`;
   e(me, "/contact");
   for (const r of posts) {
-    if (r.data.slug === p.data.slug) continue;
-    if (r.data.category !== p.data.category) continue;
+    if (r.data.slug === p.data.slug || r.data.category !== p.data.category) continue;
     e(me, `/blog/${r.data.slug}`);
   }
 }
 
-// About → contact, projects (hero CTAs)
 e("/about", "/contact");
 e("/about", "/projects");
-
-// Contact → service area teaser
 e("/contact", "/services/antennas");
 
-// ── Summary counters for the page header ─────────────────────────
 const nodeCount = nodes.length;
 const edgeCount = edges.length;
 ---
-<Base title="Site graph — Goodall Electrical" description="Interactive visualisation of every page on the site and how they link to each other through the content (not the universal nav).">
+<Base title="Site graph — Goodall Electrical" description="Interactive visualisation of every page on the site and how they link to each other.">
   <section class="relative overflow-hidden border-b border-ink-800">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
-    <Container class="relative py-16 md:py-20">
+    <Container class="relative py-12 md:py-16">
       <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">SITE GRAPH · INTERNAL TOOL</p>
-      <h1 class="mt-3 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1]">Page <span class="text-spark-500">flows.</span></h1>
-      <p class="mt-6 text-bone-200 max-w-3xl text-lg">
-        Every page on the site, with edges drawn for content-area links between them (hero CTAs, service tiles, town cross-links, related posts). Header and footer links aren't drawn — they apply to every page and would obliterate the signal. Drag nodes around, scroll to zoom, click a node to open the page.
+      <h1 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1]">Page <span class="text-spark-500">flows.</span></h1>
+      <p class="mt-4 text-bone-200 max-w-3xl">
+        Every page and the content-area links between them. Header and footer nav aren't drawn — they connect every page to every other and would hide the actual structure. Use the filters below to toggle layers in and out.
       </p>
-      <p class="mt-4 text-bone-400 text-sm">{nodeCount} pages · {edgeCount} content-area links · regenerated on every build.</p>
+      <p class="mt-3 text-bone-400 text-sm">{nodeCount} pages · {edgeCount} content links · double-click a node to open the page.</p>
     </Container>
   </section>
 
-  <section class="border-b border-ink-800">
-    <Container class="py-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-      <span class="text-bone-400 tracking-[0.2em] text-xs uppercase">Legend</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#FFD60A"></span>Core</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#ef4444"></span>Service hub</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#06b6d4"></span>Town hub (/areas)</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#8b5cf6"></span>Antenna · town</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#10b981"></span>Electrical · town</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#f97316"></span>Blog post</span>
-      <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#ec4899"></span>Project</span>
+  <!-- Filter / control bar -->
+  <section class="border-b border-ink-800 bg-ink-950 sticky top-0 z-20" style="top: 73px;">
+    <Container class="py-4 flex flex-wrap items-center gap-3">
+      <span class="text-bone-400 text-xs tracking-[0.2em] uppercase font-bold">Show</span>
+      <label class="filter-chip" data-group="core"><input type="checkbox" checked /> <span class="dot" style="background:#FFD60A"></span> Core</label>
+      <label class="filter-chip" data-group="service-hub"><input type="checkbox" checked /> <span class="dot" style="background:#ef4444"></span> Service hubs</label>
+      <label class="filter-chip" data-group="area-hub"><input type="checkbox" checked /> <span class="dot" style="background:#06b6d4"></span> Town hubs</label>
+      <label class="filter-chip" data-group="antenna-town"><input type="checkbox" /> <span class="dot" style="background:#8b5cf6"></span> Antenna · town</label>
+      <label class="filter-chip" data-group="electrical-town"><input type="checkbox" /> <span class="dot" style="background:#10b981"></span> Electrical · town</label>
+      <label class="filter-chip" data-group="blog"><input type="checkbox" /> <span class="dot" style="background:#f97316"></span> Blog</label>
+      <label class="filter-chip" data-group="project"><input type="checkbox" /> <span class="dot" style="background:#ec4899"></span> Projects</label>
+
+      <span class="mx-2 h-6 w-px bg-ink-700"></span>
+
+      <span class="text-bone-400 text-xs tracking-[0.2em] uppercase font-bold">Layout</span>
+      <div class="layout-toggle inline-flex border border-ink-700 text-xs font-semibold">
+        <button type="button" data-layout="hier" class="layout-btn px-3 py-1.5 active">Hierarchy</button>
+        <button type="button" data-layout="force" class="layout-btn px-3 py-1.5">Force</button>
+      </div>
+
+      <span class="mx-2 h-6 w-px bg-ink-700"></span>
+
+      <button type="button" id="fit-btn"   class="text-xs font-semibold border border-ink-700 px-3 py-1.5 hover:border-spark-500 hover:text-spark-500">Fit to view</button>
+      <button type="button" id="reset-btn" class="text-xs font-semibold border border-ink-700 px-3 py-1.5 hover:border-spark-500 hover:text-spark-500">Reset filters</button>
     </Container>
   </section>
 
-  <!-- Graph canvas — full-bleed, takes the remaining viewport. -->
-  <div id="site-graph" class="bg-ink-950" style="height: 78vh; min-height: 600px;"></div>
+  <div id="site-graph" class="bg-ink-950" style="height: calc(100vh - 240px); min-height: 520px;"></div>
+
+  <section class="border-t border-ink-800">
+    <Container class="py-6 text-sm text-bone-400">
+      <p><strong class="text-bone-50">Tips:</strong> scroll = zoom · drag a node to move · hover for in/out counts · <strong class="text-bone-50">double-click = open page</strong>.</p>
+      <p class="mt-2">Defaults to the high-level skeleton (core + service hubs + town hubs). Toggle the per-town layers when you want to see the cross-link clusters.</p>
+    </Container>
+  </section>
 
   <script type="application/json" id="graph-data" set:html={JSON.stringify({ nodes, edges })}></script>
 
@@ -209,88 +182,161 @@ const edgeCount = edges.length;
 
       const raw = JSON.parse(dataEl.textContent || "{}");
       const groupStyles = {
-        core:            { color: { background: "#FFD60A", border: "#FFD60A" }, font: { color: "#0a0a0a", face: "system-ui", size: 14, bold: true } },
-        "service-hub":   { color: { background: "#ef4444", border: "#ef4444" }, font: { color: "#fafaf7", face: "system-ui", size: 13, bold: true } },
-        "area-hub":      { color: { background: "#06b6d4", border: "#06b6d4" }, font: { color: "#0a0a0a", face: "system-ui", size: 12 } },
-        "antenna-town":  { color: { background: "#8b5cf6", border: "#8b5cf6" }, font: { color: "#fafaf7", face: "system-ui", size: 11 } },
-        "electrical-town": { color: { background: "#10b981", border: "#10b981" }, font: { color: "#0a0a0a", face: "system-ui", size: 11 } },
-        blog:            { color: { background: "#f97316", border: "#f97316" }, font: { color: "#0a0a0a", face: "system-ui", size: 12, bold: true } },
-        project:         { color: { background: "#ec4899", border: "#ec4899" }, font: { color: "#fafaf7", face: "system-ui", size: 12 } },
-        meta:            { color: { background: "#52525b", border: "#52525b" }, font: { color: "#fafaf7", face: "system-ui", size: 11 } },
+        core:              { color: "#FFD60A", text: "#0a0a0a", weight: "bold", size: 16 },
+        "service-hub":     { color: "#ef4444", text: "#fafaf7", weight: "bold", size: 18 },
+        "area-hub":        { color: "#06b6d4", text: "#0a0a0a", weight: "normal", size: 14 },
+        "antenna-town":    { color: "#8b5cf6", text: "#fafaf7", weight: "normal", size: 12 },
+        "electrical-town": { color: "#10b981", text: "#0a0a0a", weight: "normal", size: 12 },
+        blog:              { color: "#f97316", text: "#0a0a0a", weight: "bold",   size: 14 },
+        project:           { color: "#ec4899", text: "#fafaf7", weight: "normal", size: 13 },
+        meta:              { color: "#52525b", text: "#fafaf7", weight: "normal", size: 12 },
       };
 
-      // Size nodes by their out-degree so high-link pages stand out.
-      const outDegree = {};
-      for (const ed of raw.edges) outDegree[ed.from] = (outDegree[ed.from] || 0) + 1;
-      const inDegree = {};
-      for (const ed of raw.edges) inDegree[ed.to] = (inDegree[ed.to] || 0) + 1;
+      const outDeg = {}, inDeg = {};
+      for (const ed of raw.edges) { outDeg[ed.from] = (outDeg[ed.from] || 0) + 1; inDeg[ed.to] = (inDeg[ed.to] || 0) + 1; }
 
-      const nodes = new vis.DataSet(
+      // Build node + edge datasets with our visual style baked in.
+      const allNodes = new vis.DataSet(
         raw.nodes.map((n) => {
-          const style = groupStyles[n.group] || groupStyles.meta;
-          const score = (outDegree[n.id] || 0) + (inDegree[n.id] || 0);
+          const s = groupStyles[n.group] || groupStyles.meta;
+          const deg = (outDeg[n.id] || 0) + (inDeg[n.id] || 0);
           return {
             id: n.id,
             label: n.label,
-            shape: "dot",
-            size: Math.min(8 + score * 0.6, 36),
-            color: style.color,
-            font: style.font,
-            title: `${n.label} (${n.id}) — in:${inDegree[n.id] || 0} out:${outDegree[n.id] || 0}`,
+            group: n.group,
+            level: n.level,
+            shape: "box",
+            margin: 8,
+            widthConstraint: { maximum: 180 },
+            color: { background: s.color, border: s.color, highlight: { background: s.color, border: "#FFD60A" } },
+            font: { color: s.text, face: "system-ui", size: s.size, bold: s.weight === "bold" },
+            borderWidth: 0,
+            borderWidthSelected: 3,
+            title: `${n.label}\n${n.id}\nin:${inDeg[n.id] || 0} · out:${outDeg[n.id] || 0}`,
+            _degree: deg,
           };
         })
       );
-      const edges = new vis.DataSet(
+      const allEdges = new vis.DataSet(
         raw.edges.map((ed, i) => ({
           id: i,
           from: ed.from,
           to: ed.to,
-          arrows: "to",
+          arrows: { to: { enabled: true, scaleFactor: 0.5 } },
           color: { color: "rgba(214,212,204,0.18)", highlight: "#FFD60A", hover: "#FFD60A" },
-          smooth: { type: "continuous", roundness: 0.2 },
+          smooth: { type: "cubicBezier", roundness: 0.35 },
         }))
       );
 
-      const network = new vis.Network(target, { nodes, edges }, {
-        layout: { improvedLayout: true },
-        physics: {
-          enabled: true,
-          solver: "forceAtlas2Based",
-          forceAtlas2Based: {
-            gravitationalConstant: -80,
-            centralGravity: 0.01,
-            springLength: 110,
-            springConstant: 0.04,
-            damping: 0.45,
-            avoidOverlap: 0.6,
-          },
-          stabilization: { enabled: true, iterations: 400, updateInterval: 25, fit: true },
-        },
-        interaction: { hover: true, tooltipDelay: 80, navigationButtons: false, keyboard: false, zoomView: true },
+      // Visible state — copies of the master that we'll filter from.
+      const visibleNodes = new vis.DataSet(allNodes.get());
+      const visibleEdges = new vis.DataSet(allEdges.get());
+
+      const baseOpts = {
+        interaction: { hover: true, tooltipDelay: 100, navigationButtons: false, keyboard: false, zoomView: true, dragView: true },
+        edges: { width: 1, hoverWidth: 2, selectionWidth: 2 },
         nodes: { borderWidth: 0 },
-        edges: { width: 1, hoverWidth: 2 },
+      };
+
+      let layout = "hier";
+      function makeOptions(layoutMode) {
+        if (layoutMode === "hier") {
+          return Object.assign({}, baseOpts, {
+            layout: { hierarchical: { enabled: true, direction: "UD", sortMethod: "directed", levelSeparation: 160, nodeSpacing: 140, treeSpacing: 200, blockShifting: true, edgeMinimization: true, parentCentralization: true } },
+            physics: { enabled: false },
+            edges: Object.assign({}, baseOpts.edges, { smooth: { type: "cubicBezier", forceDirection: "vertical", roundness: 0.4 } }),
+          });
+        }
+        return Object.assign({}, baseOpts, {
+          layout: { hierarchical: false, improvedLayout: true },
+          physics: {
+            enabled: true,
+            solver: "forceAtlas2Based",
+            forceAtlas2Based: { gravitationalConstant: -120, centralGravity: 0.015, springLength: 120, springConstant: 0.05, damping: 0.5, avoidOverlap: 0.7 },
+            stabilization: { enabled: true, iterations: 300, updateInterval: 25, fit: true },
+          },
+          edges: Object.assign({}, baseOpts.edges, { smooth: { type: "continuous", roundness: 0.2 } }),
+        });
+      }
+
+      const network = new vis.Network(target, { nodes: visibleNodes, edges: visibleEdges }, makeOptions(layout));
+      network.once("stabilizationIterationsDone", () => network.fit());
+
+      function applyFilters() {
+        const visibleGroups = new Set();
+        document.querySelectorAll(".filter-chip input").forEach((cb) => {
+          if (cb.checked) visibleGroups.add(cb.closest(".filter-chip").dataset.group);
+        });
+        const keepIds = new Set(allNodes.get().filter((n) => visibleGroups.has(n.group)).map((n) => n.id));
+        visibleNodes.clear();
+        visibleNodes.add(allNodes.get().filter((n) => keepIds.has(n.id)));
+        visibleEdges.clear();
+        visibleEdges.add(allEdges.get().filter((ed) => keepIds.has(ed.from) && keepIds.has(ed.to)));
+        setTimeout(() => network.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } }), 50);
+      }
+
+      function setLayout(next) {
+        if (next === layout) return;
+        layout = next;
+        document.querySelectorAll(".layout-btn").forEach((b) => b.classList.toggle("active", b.dataset.layout === next));
+        network.setOptions(makeOptions(layout));
+        setTimeout(() => network.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } }), 50);
+      }
+
+      document.querySelectorAll(".filter-chip input").forEach((cb) => cb.addEventListener("change", applyFilters));
+      document.querySelectorAll(".layout-btn").forEach((b) => b.addEventListener("click", () => setLayout(b.dataset.layout)));
+      document.getElementById("fit-btn").addEventListener("click", () => network.fit({ animation: { duration: 400, easingFunction: "easeInOutQuad" } }));
+      document.getElementById("reset-btn").addEventListener("click", () => {
+        document.querySelectorAll(".filter-chip input").forEach((cb) => {
+          const g = cb.closest(".filter-chip").dataset.group;
+          cb.checked = (g === "core" || g === "service-hub" || g === "area-hub");
+        });
+        applyFilters();
       });
 
-      // Once the layout settles, freeze the physics so dragging is responsive.
-      network.once("stabilizationIterationsDone", () => {
-        network.setOptions({ physics: false });
+      // Highlight a node + its neighbours on click
+      network.on("click", (params) => {
+        if (!params.nodes.length) return;
+        const id = params.nodes[0];
+        const connected = new Set([id]);
+        allEdges.get().forEach((ed) => { if (ed.from === id) connected.add(ed.to); if (ed.to === id) connected.add(ed.from); });
+        visibleNodes.update(visibleNodes.get().map((n) => ({ id: n.id, opacity: connected.has(n.id) ? 1 : 0.15 })));
+      });
+      network.on("deselectNode", () => {
+        visibleNodes.update(visibleNodes.get().map((n) => ({ id: n.id, opacity: 1 })));
       });
 
-      // Click a node = open the page in a new tab.
       network.on("doubleClick", (params) => {
         if (params.nodes && params.nodes[0]) window.open(params.nodes[0], "_blank");
       });
-      network.on("selectNode", (params) => {
-        // Single-click highlights connected nodes; double-click opens the page.
-        if (!params.nodes[0]) return;
-      });
+
+      // Default to skeleton view
+      applyFilters();
     })();
   </script>
 
-  <section class="border-t border-ink-800">
-    <Container class="py-8 text-sm text-bone-400">
-      <p><strong class="text-bone-50">Tips:</strong> drag a node to reposition it · scroll to zoom · hover for in/out-link counts · <strong class="text-bone-50">double-click a node to open that page</strong> in a new tab.</p>
-      <p class="mt-2">Bigger nodes = pages with more total content links (in + out). Yellow = core landing pages. Red = service hubs. Cyan = town hubs. Purple = per-town antennas. Green = per-town electrical.</p>
-    </Container>
-  </section>
+  <style is:global>
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      border: 1px solid var(--color-ink-700);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      user-select: none;
+      color: var(--color-bone-200);
+      transition: border-color 150ms, color 150ms;
+    }
+    .filter-chip:hover { border-color: var(--color-spark-500); color: var(--color-spark-500); }
+    .filter-chip input { accent-color: var(--color-spark-500); cursor: pointer; }
+    .filter-chip .dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 9999px; }
+    .filter-chip:has(input:checked) { border-color: var(--color-bone-50); color: var(--color-bone-50); }
+
+    .layout-btn { background: transparent; color: var(--color-bone-200); cursor: pointer; transition: background 120ms, color 120ms; }
+    .layout-btn + .layout-btn { border-left: 1px solid var(--color-ink-700); }
+    .layout-btn:hover { color: var(--color-spark-500); }
+    .layout-btn.active { background: var(--color-spark-500); color: var(--color-ink-950); }
+  </style>
 </Base>
