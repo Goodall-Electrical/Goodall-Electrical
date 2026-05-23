@@ -38,6 +38,18 @@ Build a new marketing website for Goodall Electrical that replaces the existing 
 - Secondary audience: residential customers needing electrical work.
 - Tone: confident tradesman with edge. Less corporate trades-pro, more "specialists who know their craft." Bold Industrial visual direction selected during brainstorming (dark backgrounds, electric yellow accent, strong typography).
 
+## Business details (from current site)
+
+Confirmed via crawl of goodallelectrical.com.au on 2026-05-23:
+
+- **Legal entity:** Goodall Electrical, ACN 684 711 224
+- **Address:** Unit 5/9 Wellington Park Way, Sale VIC
+- **Phone:** 03 4130 5009 (presented as `0341305009` on current site)
+- **Email:** Address shown on current site's contact page is obfuscated to crawlers; the user will provide the canonical inbox (`GOODALL_INBOX` env var).
+- **Featured clients:** Sporting Legends, Star Hotel, Greyhound Racing Victoria, Maffra Community Sports Club, The Vines on Avon, Wonthaggi Workmen's. Logos appear publicly on current site; assumed reusable for the new site.
+- **Current platform:** Odoo (open-source e-commerce). The new site replaces this entirely.
+- **Existing shop SKUs:** Surveillance hard drives (Western Digital), Hikvision IP cameras, security camera accessories, hourly electrician labour. The new site drops e-commerce; if these product listings need to survive, they belong in service-page content (e.g. a "Security Cameras" service detail) rather than a shop.
+
 ## Tech stack
 
 - **Framework:** Astro (latest stable). Static-first with selective server endpoints for form handling. Best fit for a content-heavy marketing site.
@@ -258,9 +270,11 @@ CI is out of scope for this spec but the tests must be runnable locally with a s
 
 ## Open questions for user review
 
-1. **SMTP provider** — does Goodall have an existing SMTP service, or should we plan on a transactional provider (Resend, Postmark)? Defaulting to SMTP-configurable means either works.
-2. **Domain cutover** — when this is built, will it replace goodallelectrical.com.au directly, or live at a staging subdomain first? Affects when DNS work happens, not the build.
-3. **Branding assets** — do you have a current logo file (SVG ideally), brand colours documented, or specific photography? If not, we'll create placeholder marks and use stock photography during build, slotting in real assets when available.
-4. **Existing client logos** — do you have permission to display the venue logos shown on the current site (Sale Greyhound Club etc.)? Assumed yes since they're on the current site, but worth confirming.
+Resolved during brainstorm crawl: ACN, address, phone, client list, replaced-platform identity. Remaining:
 
-These don't block writing the implementation plan but should be answered before or during implementation.
+1. **Email inbox** — what address should `GOODALL_INBOX` point to? (The current site's contact-page email is obfuscated and not crawl-readable.)
+2. **SMTP provider** — does Goodall already have SMTP credentials (Microsoft 365, Google Workspace, etc.) or should we plan on a transactional API (Resend, Postmark)? Stack supports both; choice is operational.
+3. **Domain cutover** — direct replacement of goodallelectrical.com.au, or staging subdomain first? Doesn't affect the build, only DNS.
+4. **Branding assets** — logo SVG, brand colour values, and high-res photography. We'll extract the current logo and venue logos from the live site for the first build and replace with vector-quality originals if you have them.
+
+None of these block writing the implementation plan; the implementation plan will assume sensible defaults and call out the substitutions made.
