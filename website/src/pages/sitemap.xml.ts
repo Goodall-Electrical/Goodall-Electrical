@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { antennaTowns } from "../data/antenna-towns";
+import { electricalTowns } from "../data/electrical-towns";
 
 export const prerender = false;
 
@@ -23,6 +24,7 @@ export const GET: APIRoute = async ({ site }) => {
   const urls: Url[] = [
     { loc: `${origin}/`,               lastmod: now, priority: 1.0, changefreq: "weekly"  },
     { loc: `${origin}/services/`,      lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/electrical/`, lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/services/antennas/`, lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/projects/`,      lastmod: now, priority: 0.7, changefreq: "monthly" },
     { loc: `${origin}/about/`,         lastmod: now, priority: 0.6, changefreq: "monthly" },
@@ -31,9 +33,10 @@ export const GET: APIRoute = async ({ site }) => {
     { loc: `${origin}/sitemap/`,       lastmod: now, priority: 0.4, changefreq: "monthly" },
   ];
 
-  // Service detail pages (skip antennas — it has a custom landing page already in the list above).
+  // Service detail pages — skip ones with custom landings already in the list above.
+  const customLandings = new Set(["antennas", "electrical"]);
   for (const s of services) {
-    if (s.data.slug === "antennas") continue;
+    if (customLandings.has(s.data.slug)) continue;
     urls.push({
       loc: `${origin}/services/${s.data.slug}/`,
       lastmod: now,
@@ -56,6 +59,16 @@ export const GET: APIRoute = async ({ site }) => {
   for (const t of antennaTowns) {
     urls.push({
       loc: `${origin}/services/antennas/${t.slug}/`,
+      lastmod: now,
+      priority: 0.8,
+      changefreq: "monthly",
+    });
+  }
+
+  // Per-town electrical pages
+  for (const t of electricalTowns) {
+    urls.push({
+      loc: `${origin}/services/electrical/${t.slug}/`,
       lastmod: now,
       priority: 0.8,
       changefreq: "monthly",

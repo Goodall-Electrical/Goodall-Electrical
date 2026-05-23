@@ -1,0 +1,247 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import { electricalTowns } from "../../data/electrical-towns";
+import { business } from "../../data/business";
+
+export const prerender = true;
+
+const title = "Electrician — Gippsland | Goodall Electrical · Sale, Maffra, Traralgon";
+const description = "Licensed electricians serving Gippsland homes, farms and businesses. Switchboard upgrades, power and lighting, three-phase, EV chargers, compliance. Call 03 4130 5012.";
+
+const problems = [
+  { title: "Tripping switchboard or RCD",         body: "Modern appliances and EV chargers ask more of older boards than they were designed for. We test, identify the fault circuit, and either rebalance or upgrade." },
+  { title: "Old ceramic-fuse switchboard",         body: "Pre-1990s boards usually have no proper safety switches. We swap to modern RCBOs that protect every circuit individually — quoted on site, certificate at the end." },
+  { title: "Adding power points to a room",        body: "Renovation, new media room, garage workshop — we run the cable cleanly, install the points and balance the existing circuits so nothing trips." },
+  { title: "Installing an EV charger",             body: "Wall-mounted EV charger installs, including supply upgrades if your existing board can't carry the load. Tesla, ChargePoint, generic 7kW or 22kW." },
+  { title: "Rural shed / pump / three-phase",      body: "Dairy, irrigation, machinery sheds — proper IP-rated enclosures, sized cable runs, sub-boards where they make sense." },
+  { title: "Compliance + safety inspections",      body: "Pre-purchase inspections, RCD testing, exit/emergency lighting, test & tag for commercial sites." },
+];
+
+const services = [
+  "Switchboard upgrades and full replacements",
+  "Safety switch (RCD) installation and testing",
+  "Power and lighting design + install",
+  "Adding power points and circuits",
+  "Three-phase work — sheds, pumps, commercial",
+  "EV charger installation (residential + commercial)",
+  "Solar / battery interconnect electrical",
+  "Emergency lighting + exit signs",
+  "Test & tag, RCD testing, compliance reporting",
+  "Fault finding and repairs",
+];
+
+const faqs = [
+  {
+    q: "Do you offer same-day electrical service?",
+    a: `For most of central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale and surrounds — we can often get to you same-day. Call ${business.phone.display} and we'll give you a straight answer on timing.`,
+  },
+  {
+    q: "How much does it cost to call an electrician out?",
+    a: `During business hours (Mon–Fri 7am–5pm, excluding public holidays) the service call is $149 inc GST and includes the first 30 minutes of labour on site. After that we bill at $125 per hour + GST in 30-minute blocks. Outside business hours it's $195 per hour + GST, charged from when we leave our Sale warehouse to when we return.`,
+  },
+  {
+    q: "Is it time to replace my switchboard?",
+    a: "If your board still has ceramic fuses, no safety switches on lighting circuits, or trips when appliances run together, it's probably overdue. We diagnose on site, give you a clear quote for a like-for-like replacement, and handle the DNSP notification and compliance paperwork at the end.",
+  },
+  {
+    q: "Can you install an EV charger at my home?",
+    a: "Yes. We do the cable run, mount the charger, configure it, and if your existing board can't carry the extra load we'll quote a supply upgrade at the same time. Most domestic installs come in under a day.",
+  },
+  {
+    q: "Do you do commercial electrical work too?",
+    a: "Yes — pubs, clubs, retail fitouts, motels, small office spaces and trades workshops. Test & tag, RCD testing, emergency lighting maintenance, and ongoing maintenance contracts are all part of what we do.",
+  },
+  {
+    q: "What areas do you cover?",
+    a: "All of Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale, Yarram, Traralgon, Morwell, Bairnsdale and the smaller towns and rural blocks in between. If you're not sure whether your address is in range, call us.",
+  },
+];
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Electrician — Residential & Commercial",
+  "provider": {
+    "@type": "Electrician",
+    "name": business.name,
+    "telephone": business.phone.international,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": business.address.street,
+      "addressLocality": business.address.locality,
+      "addressRegion": business.address.region,
+      "postalCode": business.address.postcode,
+      "addressCountry": business.address.country,
+    },
+  },
+  "areaServed": electricalTowns.map((t) => ({ "@type": "City", "name": t.name })),
+  "url": new URL("/services/electrical", Astro.site).toString(),
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+---
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-28">
+      <a href="/services" class="text-spark-500 text-sm font-semibold">← All services</a>
+      <p class="mt-6 text-spark-500 tracking-[0.3em] text-xs font-bold">RESIDENTIAL · COMMERCIAL · GIPPSLAND</p>
+      <h1 class="mt-3 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1]">
+        Licensed electricians<br />for <span class="text-spark-500">Gippsland.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        Switchboard upgrades, EV chargers, three-phase, lighting, point additions, compliance — town homes, farms, venues and small business. Same crew you'd hire for a pub fitout shows up for your spare-room power point.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/contact#quote-form">Book an electrician</Button>
+        <a href={`tel:${business.phone.tel}`} class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500 whitespace-nowrap">
+          Call {business.phone.display}
+        </a>
+      </div>
+      <ul class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl text-sm text-bone-200">
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Same-day in central Gippsland</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Compliance paperwork handled</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Residential + commercial</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Fully licensed & insured</li>
+      </ul>
+    </Container>
+  </section>
+
+  <!-- COMMON PROBLEMS -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="COMMON JOBS" title="The work we do every week." description="The mix shifts week to week — what doesn't shift is doing the job once and doing it properly." />
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {problems.map((p) => (
+          <div class="border border-ink-800 bg-ink-900 p-6 hover:border-spark-500 transition-colors">
+            <h3 class="text-lg font-bold">{p.title}</h3>
+            <p class="mt-3 text-bone-200 text-sm leading-relaxed">{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <SectionHeading eyebrow="WHAT WE DO" title="Full residential and commercial electrical." />
+          <p class="mt-6 text-bone-200">From a single power point in a renovation to a full venue fitout — same crew, same standards. We do the work other contractors subcontract out, which means cleaner communication and a single point of accountability.</p>
+          <div class="mt-8 flex gap-3">
+            <Button href="/contact#quote-form">Get a quote</Button>
+            <Button href="/projects" variant="ghost">See our work</Button>
+          </div>
+        </div>
+        <ul class="space-y-3">
+          {services.map((s) => (
+            <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
+              <span class="text-spark-500 font-bold mt-0.5">→</span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- RATES (same as antennas — single source) -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="RATES" title="What it costs." description="The same rates apply across every electrical service call — domestic, commercial, antennas, AV." />
+      <div class="mt-12 grid md:grid-cols-3 gap-px bg-ink-700 border border-ink-700">
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.serviceCall.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.serviceCall.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.serviceCall.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.serviceCall.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.serviceCall.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.continuingLabour.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.continuingLabour.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.continuingLabour.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.continuingLabour.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.continuingLabour.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.afterHours.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.afterHours.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.afterHours.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.afterHours.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.afterHours.detail}</p>
+        </div>
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">{business.antennaRates.note} Materials (boards, switchgear, cable, fittings) are quoted on site.</p>
+    </Container>
+  </section>
+
+  <!-- SERVICE AREAS -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="SERVICE AREAS" title="Electrical service across Gippsland." description="Pick your town for local context, common electrical jobs in your area, and call-out availability." />
+      <div class="mt-12 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+        {electricalTowns.map((t) => (
+          <a
+            href={`/services/electrical/${t.slug}`}
+            class="group bg-ink-950 p-5 hover:bg-ink-900 transition-colors flex flex-col justify-between min-h-[140px]"
+          >
+            <div>
+              <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">Electrician in</p>
+              <h3 class="mt-1 text-xl font-bold">{t.name}</h3>
+              <p class="mt-2 text-bone-400 text-sm leading-snug">{t.teaser}</p>
+            </div>
+            <span class="mt-4 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">View →</span>
+          </a>
+        ))}
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">Don't see your town? Call <a href={`tel:${business.phone.tel}`} class="text-spark-500 font-semibold whitespace-nowrap">{business.phone.display}</a> — we cover all of Gippsland.</p>
+    </Container>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow="FAQ" title="Electrical questions, answered straight." />
+      <div class="mt-12 space-y-3">
+        {faqs.map((f) => (
+          <details class="border border-ink-800 bg-ink-900 group">
+            <summary class="px-6 py-4 cursor-pointer text-bone-50 font-semibold flex items-center justify-between gap-4 hover:bg-ink-800 transition-colors">
+              <span>{f.q}</span>
+              <span class="text-spark-500 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+            </summary>
+            <div class="px-6 pb-5 text-bone-200 leading-relaxed">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">BOOK AN ELECTRICIAN</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Need an electrician?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">Tell us what's going on — power out, board tripping, EV charger to install, renovation, new shed wiring. We'll come back with a quote or roll a van out same-day if we can.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href="/contact#quote-form" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href={`tel:${business.phone.tel}`} class="text-center text-ink-950 font-semibold underline whitespace-nowrap">or call {business.phone.display}</a>
+      </div>
+    </Container>
+  </section>
+</Base>
