@@ -1,11 +1,87 @@
 import type { APIRoute } from "astro";
+import { getCollection } from "astro:content";
+import { antennaTowns } from "../data/antenna-towns";
 
 export const prerender = false;
 
-export const GET: APIRoute = ({ url }) => {
-  const target = new URL("/sitemap-index.xml", url.origin).toString();
-  return new Response(null, {
-    status: 301,
-    headers: { Location: target },
+interface Url {
+  loc: string;
+  lastmod: string;
+  priority: number;
+  changefreq: "daily" | "weekly" | "monthly" | "yearly";
+}
+
+export const GET: APIRoute = async ({ site }) => {
+  const origin = site
+    ? site.toString().replace(/\/$/, "")
+    : "https://goodallelectrical.com.au";
+  const now = new Date().toISOString();
+
+  const services = await getCollection("services");
+  const projects = await getCollection("projects");
+
+  const urls: Url[] = [
+    { loc: `${origin}/`,               lastmod: now, priority: 1.0, changefreq: "weekly"  },
+    { loc: `${origin}/services/`,      lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/antennas/`, lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/projects/`,      lastmod: now, priority: 0.7, changefreq: "monthly" },
+    { loc: `${origin}/about/`,         lastmod: now, priority: 0.6, changefreq: "monthly" },
+    { loc: `${origin}/testimonials/`,  lastmod: now, priority: 0.6, changefreq: "monthly" },
+    { loc: `${origin}/contact/`,       lastmod: now, priority: 0.8, changefreq: "monthly" },
+    { loc: `${origin}/sitemap/`,       lastmod: now, priority: 0.4, changefreq: "monthly" },
+  ];
+
+  // Service detail pages (skip antennas — it has a custom landing page already in the list above).
+  for (const s of services) {
+    if (s.data.slug === "antennas") continue;
+    urls.push({
+      loc: `${origin}/services/${s.data.slug}/`,
+      lastmod: now,
+      priority: 0.9,
+      changefreq: "monthly",
+    });
+  }
+
+  // Project detail pages
+  for (const p of projects) {
+    urls.push({
+      loc: `${origin}/projects/${p.data.slug}/`,
+      lastmod: now,
+      priority: 0.7,
+      changefreq: "monthly",
+    });
+  }
+
+  // Per-town antenna pages
+  for (const t of antennaTowns) {
+    urls.push({
+      loc: `${origin}/services/antennas/${t.slug}/`,
+      lastmod: now,
+      priority: 0.8,
+      changefreq: "monthly",
+    });
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority.toFixed(1)}</priority>
+  </url>`,
+  )
+  .join("\n")}
+</urlset>
+`;
+
+  return new Response(xml, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
   });
 };

@@ -7,7 +7,10 @@ function buildServices(overrides: Partial<AppServices> = {}): AppServices {
   return {
     log: { append: vi.fn().mockResolvedValue(undefined) },
     email: vi.fn().mockResolvedValue(undefined) as unknown as AppServices["email"],
-    fergus: { createLead: vi.fn().mockResolvedValue({ id: "L-99" }) },
+    fergus: (() => {
+      const fn = vi.fn().mockResolvedValue({ id: "L-99" });
+      return { createEnquiry: fn, createLead: fn };
+    })(),
     rateLimiter: createRateLimiter({ limit: 5, windowMs: 60_000 }),
     logger: { warn: vi.fn(), error: vi.fn() },
     ...overrides,
@@ -66,7 +69,10 @@ describe("POST /api/quote", () => {
   it("still redirects to ok even when email and fergus both throw (log is canonical)", async () => {
     const services = buildServices({
       email: vi.fn().mockRejectedValue(new Error("smtp")) as unknown as AppServices["email"],
-      fergus: { createLead: vi.fn().mockRejectedValue(new Error("fergus")) },
+      fergus: (() => {
+        const fn = vi.fn().mockRejectedValue(new Error("fergus"));
+        return { createEnquiry: fn, createLead: fn };
+      })(),
     });
     setServicesForTest(services);
     const res = await POST({ request: makeForm(validFields), clientAddress: "1.2.3.4" } as Ctx);

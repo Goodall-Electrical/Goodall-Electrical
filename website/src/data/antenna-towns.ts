@@ -24,13 +24,13 @@ export const antennaTowns: AntennaTown[] = [
     postcode: "3850",
     teaser: "Our home base. New antenna installs, fault-finding and same-day repairs.",
     intro:
-      "Sale is Goodall Electrical's home base — our workshop is in Wellington Park Way, so we cover Sale antenna jobs as quickly as anyone in the region. Most of the town sits on flat ground and gets a clean line to the Mount Tassie transmitter, which means signal isn't usually the problem; it's the gear in between.",
+      "Sale is Goodall Electrical's home base, so we cover Sale antenna jobs as quickly as anyone in the region. Most of the town sits on flat ground and gets a clean line to the Mount Tassie transmitter, which means signal isn't usually the problem; it's the gear in between.",
     context:
       "Sale is a relatively easy reception area. The dominant issue we see is ageing distribution: cheap splitters, dead amplifiers, and old cable that has slowly degraded. The fix is almost always at the wall-plate end of the system, not the roof. When we do replace antennas it's usually after a storm or because a previous installer used residential-grade gear on a multi-storey home that needed a higher mast.",
     localIssues: [
       "Distribution failures in older brick homes with multiple TVs",
       "Storm damage from spring/summer fronts coming off Bass Strait",
-      "Insurance jobs after wind events along the Avon River corridor",
+      "Storm-damaged antenna replacement along the Avon River corridor",
     ],
     nearby: ["maffra", "longford", "stratford", "rosedale"],
   },

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { z } from "zod";
 import { createSubmissionLog, type SubmissionLog } from "./log";
 import { createEmailSender, createSmtpMailer, type EmailSender } from "./email";

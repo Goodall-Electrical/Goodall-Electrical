@@ -6,15 +6,27 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
+      # Bind 3000 on the host to 3000 in the container.
+      # Behind a reverse proxy (Caddy / Nginx / Traefik), drop the host
+      # binding and put this service on the proxy's network instead.
       - "3000:3000"
     volumes:
+      # Persist the canonical JSONL submission log across container restarts.
       - submissions:/var/log/goodall
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      # The image ships its own HEALTHCHECK directive too; this entry
+      # mirrors it so `docker compose ps` shows status without a custom
+      # compose-only probe.
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
 
 volumes:
   submissions:

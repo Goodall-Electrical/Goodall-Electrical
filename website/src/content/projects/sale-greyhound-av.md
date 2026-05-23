@@ -4,7 +4,7 @@ slug: sale-greyhound-av
 client: Sale Greyhound Racing Club
 category: hospitality
 services: [electrical, audio-visual, communications]
-year: 2024
+year: 2026
 featured: true
 heroImage: /projects/sale-greyhound/hero.jpg
 gallery: []

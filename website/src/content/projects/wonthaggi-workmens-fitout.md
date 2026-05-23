@@ -1,13 +1,13 @@
 ---
-title: Wonthaggi Workmen's Club — venue fitout
+title: Wonthaggi Workmen's Club — projector installation
 slug: wonthaggi-workmens-fitout
 client: Wonthaggi Workmen's Club
 category: hospitality
-services: [electrical, audio-visual, communications]
-year: 2023
+services: [audio-visual, electrical]
+year: 2025
 featured: true
 heroImage: /projects/wonthaggi-workmens/hero.jpg
 gallery: []
 ---
 
-End-to-end electrical, AV and comms for the club's refurbished gaming and dining areas. Switchboard work, lighting design, AV zones and a refreshed comms rack.
+A full projector installation at the club — projector mount, screen, source switching and audio wired in cleanly so staff can run it without thinking.

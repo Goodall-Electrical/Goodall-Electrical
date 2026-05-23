@@ -1,19 +1,5 @@
 ---
-const data = {
-  "@context": "https://schema.org",
-  "@type": "Electrician",
-  "name": "Goodall Electrical",
-  "telephone": "+61341305009",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Unit 5/9 Wellington Park Way",
-    "addressLocality": "Sale",
-    "addressRegion": "VIC",
-    "addressCountry": "AU",
-  },
-  "areaServed": "Gippsland, Victoria, Australia",
-  "url": Astro.site?.toString(),
-  "identifier": "ACN 684 711 224",
-};
+import { localBusinessSchema } from "../../data/business";
+const data = localBusinessSchema();
 ---
 <script type="application/ld+json" set:html={JSON.stringify(data)}></script>

@@ -11,6 +11,14 @@ function clientIp(req: Request, fallback?: string): string {
     || "unknown";
 }
 
+// Restrict ?returnTo to a safe internal path (prevent open redirect).
+function safeReturnTo(raw: string | null): string {
+  if (!raw) return "/quote";
+  if (!raw.startsWith("/") || raw.startsWith("//")) return "/quote";
+  if (raw.includes(":")) return "/quote";
+  return raw;
+}
+
 async function bodyToObject(req: Request): Promise<Record<string, unknown>> {
   const ct = req.headers.get("content-type") || "";
   if (ct.includes("multipart/form-data") || ct.includes("application/x-www-form-urlencoded")) {
@@ -27,6 +35,8 @@ async function bodyToObject(req: Request): Promise<Record<string, unknown>> {
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const services = getServices();
   const ip = clientIp(request, clientAddress);
+  const returnTo = safeReturnTo(new URL(request.url).searchParams.get("returnTo"));
+  const successUrl = new URL(`${returnTo}?status=ok`, request.url);
 
   let raw: Record<string, unknown>;
   try {
@@ -44,7 +54,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   if (parsed.data._hp) {
-    return Response.redirect(new URL("/quote?status=ok", request.url), 303);
+    return Response.redirect(successUrl, 303);
   }
 
   if (!services.rateLimiter.check(ip)) {
@@ -62,5 +72,5 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   if (!result.ok) {
     return new Response("Server error", { status: 500 });
   }
-  return Response.redirect(new URL("/quote?status=ok", request.url), 303);
+  return Response.redirect(successUrl, 303);
 };

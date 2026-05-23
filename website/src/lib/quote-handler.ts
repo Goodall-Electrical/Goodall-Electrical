@@ -20,18 +20,17 @@ export interface QuoteHandler {
 }
 
 function formatBody(q: QuoteInput): string {
-  return [
+  const lines = [
     `Name: ${q.name}`,
     `Email: ${q.email}`,
     `Phone: ${q.phone}`,
-    `Job type: ${q.jobType}`,
-    `Site type: ${q.siteType}`,
-    `Urgency: ${q.urgency}`,
-    `Site address: ${q.siteAddress}`,
-    "",
-    "Description:",
-    q.description,
-  ].join("\n");
+  ];
+  if (q.jobType)     lines.push(`Job type: ${q.jobType}`);
+  if (q.siteType)    lines.push(`Site type: ${q.siteType}`);
+  if (q.urgency)     lines.push(`Urgency: ${q.urgency}`);
+  if (q.siteAddress) lines.push(`Site address: ${q.siteAddress}`);
+  lines.push("", "Description:", q.description);
+  return lines.join("\n");
 }
 
 export function createQuoteHandler(deps: QuoteHandlerDeps): QuoteHandler {
@@ -44,21 +43,30 @@ export function createQuoteHandler(deps: QuoteHandlerDeps): QuoteHandler {
         return { ok: false };
       }
 
+      // Fergus has no structured fields for job type / site type / urgency,
+      // so they're folded into the description that lands in the enquiry.
+      const fergusDescription = [
+        input.description,
+        "",
+        input.jobType  ? `Job type: ${input.jobType}`     : null,
+        input.siteType ? `Site type: ${input.siteType}`   : null,
+        input.urgency  ? `Urgency: ${input.urgency}`      : null,
+      ].filter(Boolean).join("\n");
+
       const results = await Promise.allSettled([
         deps.email({
           subject: `New quote request — ${input.name}`,
           text: formatBody(input),
         }),
-        deps.fergus.createLead({
+        deps.fergus.createEnquiry({
           name: input.name,
           email: input.email,
-          phone: input.phone,
-          siteAddress: input.siteAddress,
-          description: input.description,
-          jobType: input.jobType,
-          siteType: input.siteType,
-          urgency: input.urgency,
+          phoneNumber: input.phone,
+          description: fergusDescription,
           source: "website-quote-form",
+          address1: input.siteAddress?.trim() || "(not provided)",
+          addressCity: "Sale",
+          addressCountry: "AU",
         }),
       ]);
 

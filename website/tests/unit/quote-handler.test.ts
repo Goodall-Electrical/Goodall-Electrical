@@ -27,7 +27,7 @@ function build({
   const handler = createQuoteHandler({
     log: { append: logAppend },
     email: sendEmail,
-    fergus: { createLead },
+    fergus: { createEnquiry: createLead, createLead },
     logger: { warn: vi.fn(), error: vi.fn() },
   });
   return { handler, sendEmail, createLead, logAppend };

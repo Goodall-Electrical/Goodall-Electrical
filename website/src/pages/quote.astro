@@ -1,25 +1,5 @@
 ---
-import Base from "../layouts/Base.astro";
-import Container from "../components/ui/Container.astro";
-import QuoteForm from "../components/forms/QuoteForm.astro";
-
-const status = Astro.url.searchParams.get("status");
+// The quote form now lives on /contact. Anything still hitting /quote
+// (old bookmarks, search engines, direct links) gets a 301 to the new home.
+return Astro.redirect("/contact#quote-form", 301);
 ---
-<Base title="Request a quote — Goodall Electrical" description="Tell us about your job and we'll come back to you with a quote.">
-  <Container class="py-20" size="narrow">
-    <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">REQUEST A QUOTE</p>
-    <h1 class="mt-3 text-5xl md:text-6xl font-extrabold tracking-tight">Tell us the job.</h1>
-    <p class="mt-4 text-bone-200 text-lg">Fill out the basics — we'll handle the rest. Urgent? Call <a href="tel:0341305009" class="text-spark-500 font-semibold">03 4130 5009</a>.</p>
-
-    {status === "ok" ? (
-      <div class="mt-12 border-l-4 border-spark-500 bg-ink-900 p-6">
-        <p class="font-bold text-spark-500 text-lg">Thanks — we've got your request.</p>
-        <p class="text-bone-200 mt-2">A team member will be in touch within one business day. For anything urgent, call us on <a href="tel:0341305009" class="text-spark-500 font-semibold">03 4130 5009</a>.</p>
-      </div>
-    ) : (
-      <div class="mt-12">
-        <QuoteForm />
-      </div>
-    )}
-  </Container>
-</Base>

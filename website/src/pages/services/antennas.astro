@@ -4,18 +4,21 @@ import Container from "../../components/ui/Container.astro";
 import Button from "../../components/ui/Button.astro";
 import SectionHeading from "../../components/ui/SectionHeading.astro";
 import { antennaTowns } from "../../data/antenna-towns";
+import { business } from "../../data/business";
+
+const rates = business.antennaRates;
 
 export const prerender = true;
 
 const title = "TV Antenna Installation & Repair — Gippsland Homes | Goodall Electrical";
-const description = "Residential TV antenna installation, repair and signal tuning across Gippsland. Same-day service to Sale, Maffra, Traralgon, Bairnsdale, Wonthaggi and surrounds. Call 03 4130 5009.";
+const description = "Residential TV antenna installation, repair and signal tuning across Gippsland. Same-day service to Sale, Maffra, Traralgon, Bairnsdale, Wonthaggi and surrounds. Call 03 4130 5012.";
 
 const problems = [
   { title: "No signal or pixelated picture", body: "Bad signal is usually a misaligned antenna, a dead amplifier, or a splitter that's quietly failed. We diagnose with a signal meter, not guesswork." },
   { title: "Reception drops in storms or wind", body: "Loose mounts, water in connectors, or a tired antenna in a fringe area. We replace the weak point — not the whole system." },
   { title: "Some TVs work, others don't", body: "Usually a distribution problem — a bad splitter, weak amplifier, or a cable run that's been chewed up. We trace it room by room." },
   { title: "Adding a TV to a new room", body: "Need a point in the bedroom, garage or extension? We pull cable, terminate the wall plate and balance the signal so the existing TVs still run clean." },
-  { title: "Storm damage and insurance jobs", body: "Antenna down? We replace, document, and provide an itemised invoice that works for your insurer." },
+  { title: "Storm-damaged or fallen antennas", body: "Antenna down after a front came through? We replace it cleanly — new mast, new bracketing, sealed connectors so the next storm doesn't repeat the job." },
 ];
 
 const services = [
@@ -26,7 +29,7 @@ const services = [
   "Wall-plate installation and tidy cable runs",
   "Amplifier and splitter replacement / balancing",
   "Foxtel and streaming source distribution at home",
-  "Insurance reports and itemised invoicing",
+  "Itemised quotes and tidy invoicing",
 ];
 
 const towns = antennaTowns;
@@ -34,11 +37,11 @@ const towns = antennaTowns;
 const faqs = [
   {
     q: "Do you offer same-day antenna service?",
-    a: "For most of central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale — yes, when we have a van free. Call 03 4130 5009 and we'll give you a straight answer.",
+    a: "For most of central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale — yes, when we have a van free. Call 03 4130 5012 and we'll give you a straight answer.",
   },
   {
     q: "How much does a new TV antenna installation cost?",
-    a: "Most domestic installs come in between a few hundred dollars and around a thousand, depending on the antenna spec, mast height, cable runs, wall-plate work and whether existing distribution needs replacing. We quote on site so there are no surprises.",
+    a: "During business hours (Monday to Friday, 7am to 5pm, excluding public holidays) a service call is $149 inc GST and includes the first 30 minutes of labour on site. After that we bill at $125 per hour + GST in 30-minute blocks. Outside business hours — weekends, evenings and public holidays — it's $195 per hour + GST, charged from when we leave our Sale warehouse to when we return. Materials (Matchmaster antenna, mast, brackets and cable) are quoted on site so there are no surprises.",
   },
   {
     q: "Can you fix my reception without replacing the antenna?",
@@ -47,10 +50,6 @@ const faqs = [
   {
     q: "Can you add a TV point to another room?",
     a: "Yes. We pull the cable, terminate the wall plate, and rebalance the existing distribution so the new point doesn't pull signal from the rest of the house.",
-  },
-  {
-    q: "My antenna came down in a storm — can you handle insurance?",
-    a: "Yes. We replace the antenna, document the job, and provide an itemised invoice and (if needed) a written report your insurer can use.",
   },
   {
     q: "What areas do you cover?",
@@ -66,7 +65,7 @@ const serviceSchema = {
   "provider": {
     "@type": "Electrician",
     "name": "Goodall Electrical",
-    "telephone": "+61341305009",
+    "telephone": "+61341305012",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Unit 5/9 Wellington Park Way",
@@ -106,17 +105,49 @@ const faqSchema = {
         New antenna installs, storm damage, reception fixes and extra TV points — straight to your house, with proper signal-meter diagnosis and a no-surprises quote.
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
-        <Button href="/quote">Book an antenna job</Button>
-        <a href="tel:0341305009" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
-          Call 03 4130 5009
+        <Button href="/contact#quote-form">Book an antenna job</Button>
+        <a href="tel:0341305012" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
+          Call 03 4130 5012
         </a>
       </div>
       <ul class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl text-sm text-bone-200">
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Matchmaster antennas as standard</li>
         <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Same-day in central Gippsland</li>
         <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Signal-meter diagnosis</li>
-        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Insurance jobs handled</li>
         <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Fully licensed & insured</li>
       </ul>
+    </Container>
+  </section>
+
+  <!-- GEAR WE INSTALL -->
+  <section class="py-16 border-b border-ink-800 bg-ink-950">
+    <Container class="grid md:grid-cols-[auto_1fr] items-center gap-10">
+      <div>
+        <p class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">The gear we install</p>
+        <a
+          href="https://www.matchmaster.com.au/"
+          target="_blank"
+          rel="noopener"
+          aria-label="Visit the Matchmaster website"
+          class="mt-4 block group"
+        >
+          <img
+            src="/logos/matchmaster.svg"
+            alt="Matchmaster"
+            width="304"
+            height="79"
+            class="h-12 md:h-14 w-auto opacity-90 group-hover:opacity-100 transition-opacity"
+          />
+        </a>
+      </div>
+      <div class="md:border-l md:border-ink-800 md:pl-10">
+        <p class="text-bone-200 text-lg leading-relaxed">
+          We fit <strong class="text-bone-50">Matchmaster</strong> antennas as standard — an Australian brand that handles fringe-area signal, salt air and Gippsland storms far better than the cheap import gear you'll find at a hardware store. They're more expensive, they last longer, and we don't have to keep coming back to them.
+        </p>
+        <p class="mt-4 text-bone-400 text-sm">
+          If a previous install used something cheaper and it's failed early, we'll usually recommend Matchmaster as the replacement. The cost difference pays for itself well inside the warranty period.
+        </p>
+      </div>
     </Container>
   </section>
 
@@ -143,7 +174,7 @@ const faqSchema = {
           <SectionHeading eyebrow="WHAT WE DO" title="Antenna work for Gippsland homes." />
           <p class="mt-6 text-bone-200">Domestic antenna work is the kind of job where the difference between a quick fix and a fix that lasts comes down to experience. We do this every week — across homes from Sale to Lakes Entrance.</p>
           <div class="mt-8 flex gap-3">
-            <Button href="/quote">Get a quote</Button>
+            <Button href="/contact#quote-form">Get a quote</Button>
             <Button href="/projects" variant="ghost">See our work</Button>
           </div>
         </div>
@@ -156,6 +187,34 @@ const faqSchema = {
           ))}
         </ul>
       </div>
+    </Container>
+  </section>
+
+  <!-- RATES -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="RATES" title="What it costs." description="Up-front rates so you know what you're in for before we even quote. No hidden call-out fees, no surprises on the invoice." />
+      <div class="mt-12 grid md:grid-cols-3 gap-px bg-ink-700 border border-ink-700">
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.serviceCall.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.serviceCall.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.serviceCall.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.serviceCall.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.serviceCall.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.continuingLabour.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.continuingLabour.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.continuingLabour.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.continuingLabour.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.continuingLabour.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.afterHours.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.afterHours.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.afterHours.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.afterHours.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.afterHours.detail}</p>
+        </div>
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">{rates.note}</p>
     </Container>
   </section>
 
@@ -178,7 +237,7 @@ const faqSchema = {
           </a>
         ))}
       </div>
-      <p class="mt-6 text-bone-400 text-sm">Don't see your town? Call <a href="tel:0341305009" class="text-spark-500 font-semibold">03 4130 5009</a> — we cover all of Gippsland.</p>
+      <p class="mt-6 text-bone-400 text-sm">Don't see your town? Call <a href="tel:0341305012" class="text-spark-500 font-semibold whitespace-nowrap">03 4130 5012</a> — we cover all of Gippsland.</p>
     </Container>
   </section>
 
@@ -209,8 +268,8 @@ const faqSchema = {
         <p class="mt-3 text-ink-950/80 max-w-xl">Tell us the basics — address, what's not working, how many rooms. We'll come back with a quote, or roll a van out same-day if we can.</p>
       </div>
       <div class="flex flex-col gap-2">
-        <a href="/quote" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
-        <a href="tel:0341305009" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5009</a>
+        <a href="/contact#quote-form" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href="tel:0341305012" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5012</a>
       </div>
     </Container>
   </section>

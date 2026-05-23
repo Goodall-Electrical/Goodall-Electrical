@@ -4,6 +4,9 @@ import Container from "../../../components/ui/Container.astro";
 import Button from "../../../components/ui/Button.astro";
 import SectionHeading from "../../../components/ui/SectionHeading.astro";
 import { antennaTowns, type AntennaTown } from "../../../data/antenna-towns";
+import { business } from "../../../data/business";
+
+const rates = business.antennaRates;
 
 export const prerender = true;
 
@@ -18,17 +21,17 @@ interface Props { town: AntennaTown; }
 const { town } = Astro.props;
 
 const title = `TV Antenna Installation & Repair in ${town.name} | Goodall Electrical`;
-const description = `Residential TV antenna installation, repair and signal tuning in ${town.name} (${town.postcode ?? "Gippsland"}). Same-day service where possible. Call 03 4130 5009.`;
+const description = `Residential TV antenna installation, repair and signal tuning in ${town.name} (${town.postcode ?? "Gippsland"}). Same-day service where possible. Call 03 4130 5012.`;
 
 // Shared FAQ list, lightly customised with the town name.
 const faqs = [
   {
     q: `How quickly can you get to a job in ${town.name}?`,
-    a: `For central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale and surrounds — we can often do same-day. ${town.name} is on our regular run; call 03 4130 5009 and we'll give you a straight answer on timing.`,
+    a: `For central Gippsland — Sale, Maffra, Stratford, Heyfield, Rosedale and surrounds — we can often do same-day. ${town.name} is on our regular run; call 03 4130 5012 and we'll give you a straight answer on timing.`,
   },
   {
     q: `How much does a new TV antenna install cost in ${town.name}?`,
-    a: "Most domestic installs land between a few hundred dollars and around a thousand, depending on antenna spec, mast height, cable runs and existing distribution. We quote on site so there are no surprises.",
+    a: "During business hours (Monday to Friday, 7am to 5pm, excluding public holidays) a service call is $149 inc GST and includes the first 30 minutes of labour on site. After that we bill at $125 per hour + GST in 30-minute blocks. Outside business hours — weekends, evenings and public holidays — it's $195 per hour + GST, charged from when we leave our Sale warehouse to when we return. Materials (Matchmaster antenna, mast, brackets and cable) are quoted on site so there are no surprises.",
   },
   {
     q: "Can you fix reception without replacing the antenna?",
@@ -37,10 +40,6 @@ const faqs = [
   {
     q: "Can you add a TV point to another room?",
     a: "Yes. We pull the cable, terminate the wall plate, and rebalance the existing distribution so the new point doesn't pull signal from the rest of the house.",
-  },
-  {
-    q: "My antenna came down in a storm — can you handle insurance?",
-    a: "Yes. We replace the antenna, document the job and provide an itemised invoice and (if needed) a written report your insurer can use.",
   },
 ];
 
@@ -53,7 +52,7 @@ const serviceSchema = {
   "provider": {
     "@type": "Electrician",
     "name": "Goodall Electrical",
-    "telephone": "+61341305009",
+    "telephone": "+61341305012",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Unit 5/9 Wellington Park Way",
@@ -124,9 +123,9 @@ const nearbyTowns = town.nearby
         {town.intro}
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
-        <Button href={`/quote?service=antennas&town=${town.slug}`}>Book a {town.name} job</Button>
-        <a href="tel:0341305009" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
-          Call 03 4130 5009
+        <Button href={`/contact?service=antennas&town=${town.slug}#quote-form`}>Book a {town.name} job</Button>
+        <a href="tel:0341305012" class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500">
+          Call 03 4130 5012
         </a>
       </div>
     </Container>
@@ -139,16 +138,6 @@ const nearbyTowns = town.nearby
       <div class="mt-8 text-bone-200 text-lg leading-relaxed">
         {town.context}
       </div>
-
-      <h3 class="mt-12 text-xs font-bold tracking-[0.2em] uppercase text-spark-500">Common in {town.name}</h3>
-      <ul class="mt-4 space-y-3">
-        {town.localIssues.map((issue) => (
-          <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
-            <span class="text-spark-500 font-bold mt-0.5">→</span>
-            <span>{issue}</span>
-          </li>
-        ))}
-      </ul>
     </Container>
   </section>
 
@@ -162,7 +151,7 @@ const nearbyTowns = town.nearby
             From a quick fault-find through to a full new install on a new build, we cover the lot — properly, with no upselling and no guesswork.
           </p>
           <div class="mt-8 flex gap-3">
-            <Button href={`/quote?service=antennas&town=${town.slug}`}>Get a quote</Button>
+            <Button href={`/contact?service=antennas&town=${town.slug}#quote-form`}>Get a quote</Button>
             <Button href="/services/antennas" variant="ghost">All antenna info</Button>
           </div>
         </div>
@@ -175,7 +164,7 @@ const nearbyTowns = town.nearby
             "Wall-plate installation and tidy cable runs",
             "Amplifier and splitter replacement / balancing",
             "Foxtel and streaming source distribution at home",
-            "Insurance reports and itemised invoicing",
+            "Itemised quotes and tidy invoicing",
           ].map((s) => (
             <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
               <span class="text-spark-500 font-bold mt-0.5">→</span>
@@ -184,6 +173,34 @@ const nearbyTowns = town.nearby
           ))}
         </ul>
       </div>
+    </Container>
+  </section>
+
+  <!-- RATES -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="RATES" title={`What an antenna job in ${town.name} costs.`} description="Same rates everywhere in Gippsland — flat call-out, hourly labour after that. No surprises on the invoice." />
+      <div class="mt-12 grid md:grid-cols-3 gap-px bg-ink-700 border border-ink-700">
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.serviceCall.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.serviceCall.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.serviceCall.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.serviceCall.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.serviceCall.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.continuingLabour.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.continuingLabour.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.continuingLabour.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.continuingLabour.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.continuingLabour.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{rates.afterHours.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{rates.afterHours.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${rates.afterHours.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{rates.afterHours.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{rates.afterHours.detail}</p>
+        </div>
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">{rates.note}</p>
     </Container>
   </section>
 
@@ -238,8 +255,8 @@ const nearbyTowns = town.nearby
         <p class="mt-3 text-ink-950/80 max-w-xl">Tell us the basics — address, what's not working, how many rooms. We'll come back with a quote, or roll a van out same-day if we can.</p>
       </div>
       <div class="flex flex-col gap-2">
-        <a href={`/quote?service=antennas&town=${town.slug}`} class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
-        <a href="tel:0341305009" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5009</a>
+        <a href={`/contact?service=antennas&town=${town.slug}#quote-form`} class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href="tel:0341305012" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5012</a>
       </div>
     </Container>
   </section>

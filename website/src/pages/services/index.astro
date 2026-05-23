@@ -2,24 +2,240 @@
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
 import SectionHeading from "../../components/ui/SectionHeading.astro";
 
 export const prerender = true;
 
 const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+
+// Sub-services and SVG icons per service, keyed by slug.
+interface ServiceMeta {
+  intro: string;
+  bullets: string[];
+}
+const meta: Record<string, ServiceMeta> = {
+  electrical: {
+    intro: "Licensed electricians serving Gippsland homes and venues. From a single power point to a full venue switchboard, we do the work other contractors subcontract out.",
+    bullets: [
+      "Power and lighting design + installation",
+      "Switchboard upgrades and compliance",
+      "Three-phase work for commercial venues",
+      "Maintenance contracts and emergency callouts",
+      "Test & tag, RCD and emergency lighting",
+    ],
+  },
+  "audio-visual": {
+    intro: "Pub, club and venue AV — sports-bar source switching, multi-zone audio and function-room flexibility. Designed for venues that need staff to operate it, not specialists.",
+    bullets: [
+      "Multi-zone audio (PA, background, function rooms)",
+      "TV networks and digital signage",
+      "Sports-bar source switching (Foxtel, Sky Racing)",
+      "Microphone, mixing and live-event audio",
+      "Touch-panel control for venue staff",
+    ],
+  },
+  "control-automation": {
+    intro: "Lighting, HVAC, access and venue-control automation. We bring the equipment you've already paid for under one panel staff can actually run from a tablet.",
+    bullets: [
+      "Lighting control (DMX, DALI, scene-based)",
+      "HVAC integration and scheduling",
+      "Whole-venue Crestron or custom control",
+      "Energy monitoring and after-hours shutdowns",
+      "Integration with existing BMS systems",
+    ],
+  },
+  communications: {
+    intro: "Structured cabling, Wi-Fi coverage, CCTV and EFTPOS networks. We pull cable, terminate ports, configure the gear and document the rack so future trades know where things are.",
+    bullets: [
+      "Cat6/Cat6A cabling and patch panels",
+      "Wi-Fi heat-mapping, AP installation",
+      "CCTV cabling, NVR setup, remote access",
+      "EFTPOS, POS and back-office networks",
+      "Comms-room cleanups and documentation",
+    ],
+  },
+  antennas: {
+    intro: "Residential TV antenna installation, signal tuning and reception repairs across Gippsland — with town-by-town local pricing pages so you know what to expect.",
+    bullets: [
+      "New TV antenna installation",
+      "Storm damage and emergency callouts",
+      "Signal-meter diagnosis for reception faults",
+      "Adding TV points to bedrooms and extensions",
+      "Foxtel and streaming distribution",
+    ],
+  },
+};
+
+// Stroke-style SVG icons per service (24×24 viewBox). All paths inherit
+// stroke from the wrapping <svg> so hover-colour switching just works.
+const icons: Record<string, string> = {
+  // Lightning bolt outline
+  electrical: `<path d="M13 2 L4 14 h7 l-1 8 L20 10 h-7 z"/>`,
+
+  // TV with antenna "rabbit ears"
+  "audio-visual": `<rect x="2" y="7" width="20" height="13" rx="1"/><path d="M17 3l-5 4-5-4"/>`,
+
+  // Three rows of sliders (control panel)
+  "control-automation": `<line x1="4" y1="6" x2="13" y2="6"/><line x1="19" y1="6" x2="20" y2="6"/><circle cx="16" cy="6" r="2"/><line x1="4" y1="12" x2="5" y2="12"/><line x1="11" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="2"/><line x1="4" y1="18" x2="15" y2="18"/><line x1="20" y1="18" x2="20" y2="18"/><circle cx="18" cy="18" r="2"/>`,
+
+  // Connected network nodes (triangle of three)
+  communications: `<circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="7.2" y1="7.6" x2="10.8" y2="16.4"/><line x1="16.8" y1="7.6" x2="13.2" y2="16.4"/>`,
+
+  // Yagi rooftop TV antenna — horizontal boom with descending dipoles + mast + base bracket
+  antennas: `<line x1="3" y1="9" x2="21" y2="9"/><line x1="5" y1="3" x2="5" y2="15"/><line x1="9" y1="5" x2="9" y2="13"/><line x1="13" y1="6.5" x2="13" y2="11.5"/><line x1="17" y1="7.5" x2="17" y2="10.5"/><line x1="20" y1="8" x2="20" y2="10"/><line x1="13" y1="9" x2="13" y2="22"/><line x1="10" y1="22" x2="16" y2="22"/>`,
+};
+
+const valueProps = [
+  { n: "01", title: "One contractor, all five trades", body: "No coordinating four different tradies, no finger-pointing when something doesn't work. One number, one team, one invoice." },
+  { n: "02", title: "Commercial experience on every job", body: "We work on pubs, clubs and venues every week. The same standards come home with us when we do residential work." },
+  { n: "03", title: "Compliance handled", body: "Licensed, insured, and we leave you with the certificates and paperwork on the way out the door." },
+];
+
+const process = [
+  { n: "01", title: "Site visit", body: "We come out, listen, and look. No charge on most jobs." },
+  { n: "02", title: "Scope & quote", body: "Itemised written quote. Labour, materials, timeline — no surprises." },
+  { n: "03", title: "Do the job", body: "Our team. Coordinated with other trades, cleaned up after." },
+  { n: "04", title: "Hand over", body: "Compliance paperwork, certificates, and a walk-through with your team." },
+];
+
+const towns = ["Sale", "Maffra", "Stratford", "Heyfield", "Bairnsdale", "Traralgon", "Morwell", "Loch Sport"];
 ---
-<Base title="Services — Goodall Electrical" description="Commercial and residential electrical, audio visual, automation, communications and antenna services.">
-  <Container class="py-20">
-    <SectionHeading eyebrow="OUR SERVICES" title="What we do — and how we do it." description="Five trades, fully in-house. No subcontracting the work we're known for." />
-    <div class="mt-16 grid md:grid-cols-2 gap-px bg-ink-700 border border-ink-700">
-      {services.map((s) => (
-        <a href={`/services/${s.data.slug}`} class="bg-ink-950 hover:bg-ink-900 p-8 transition-colors group">
-          <p class="text-spark-500 text-xs font-bold tracking-[0.2em]">0{s.data.order}</p>
-          <h2 class="mt-3 text-2xl font-bold">{s.data.title}</h2>
-          <p class="mt-3 text-bone-200">{s.data.summary}</p>
-          <span class="mt-5 inline-block text-spark-500 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
-        </a>
+<Base title="Services — Goodall Electrical | Gippsland Electricians, AV, Automation, Comms" description="Five trades under one roof — electrical, audio visual, automation, communications and TV antenna work across Gippsland. Licensed, insured, family-owned.">
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-28">
+      <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">OUR SERVICES</p>
+      <h1 class="mt-3 text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95]">
+        Five trades.<br />
+        One <span class="text-spark-500">team.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        Electrical, audio visual, control & automation, communications and TV antennas — all in-house, all licensed, all running through one office. From a pub fitout to a power point in the spare room.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/contact#quote-form">Get a quote</Button>
+        <Button href="/projects" variant="ghost">See our work</Button>
+      </div>
+    </Container>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section class="border-b border-ink-800">
+    <Container class="py-20 grid md:grid-cols-3 gap-px bg-ink-700 border border-ink-700">
+      {valueProps.map((v) => (
+        <div class="bg-ink-950 p-8">
+          <p class="text-spark-500 font-bold text-sm tracking-[0.25em]">{v.n}</p>
+          <h3 class="mt-3 text-xl font-bold">{v.title}</h3>
+          <p class="mt-3 text-bone-200 text-sm leading-relaxed">{v.body}</p>
+        </div>
       ))}
-    </div>
-  </Container>
+    </Container>
+  </section>
+
+  <!-- SERVICES — RICH CARDS -->
+  <section class="border-b border-ink-800">
+    <Container class="py-20">
+      <SectionHeading eyebrow="WHAT WE DO" title="The full breakdown." description="Each trade is fully in-house. Click any service for a deeper rundown, sub-services and the per-town breakdown where it exists." />
+
+      <div class="mt-16 space-y-px">
+        {services.map((s, i) => {
+          const m = meta[s.data.slug];
+          const icon = icons[s.data.slug];
+          const reverse = i % 2 === 1;
+          return (
+            <a href={`/services/${s.data.slug}`} class="group block bg-ink-950 hover:bg-ink-900 transition-colors border border-ink-800">
+              <div class={`grid md:grid-cols-[200px_1fr_auto] items-start gap-8 p-8 md:p-10 ${reverse ? '' : ''}`}>
+                <!-- Icon + number -->
+                <div class="flex md:flex-col items-center md:items-start gap-4 md:gap-6">
+                  <div class="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border border-spark-500/30 text-spark-500 group-hover:border-spark-500 group-hover:bg-spark-500 group-hover:text-ink-950 transition-colors">
+                    <svg viewBox="0 0 24 24" class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={icon}></svg>
+                  </div>
+                  <div>
+                    <p class="text-spark-500 text-xs font-bold tracking-[0.25em]">0{s.data.order}</p>
+                    <p class="text-bone-400 text-xs tracking-[0.25em] uppercase mt-1">Service</p>
+                  </div>
+                </div>
+
+                <!-- Content -->
+                <div>
+                  <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight group-hover:text-spark-500 transition-colors">{s.data.title}</h3>
+                  <p class="mt-3 text-bone-200 leading-relaxed">{m?.intro}</p>
+                  {m && (
+                    <ul class="mt-5 grid sm:grid-cols-2 gap-2">
+                      {m.bullets.map((b) => (
+                        <li class="flex gap-2 items-start text-bone-200 text-sm">
+                          <span class="text-spark-500 mt-1">→</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <!-- Arrow -->
+                <div class="hidden md:flex items-center self-center text-spark-500 group-hover:translate-x-2 transition-transform">
+                  <span class="text-3xl font-bold">→</span>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </Container>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="border-b border-ink-800">
+    <Container class="py-20">
+      <SectionHeading eyebrow="HOW WE WORK" title="From first call to hand-over." description="No mystery. Four straightforward steps on every job." />
+      <ol class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+        {process.map((step) => (
+          <li class="bg-ink-950 p-6">
+            <p class="text-spark-500 font-bold text-sm tracking-[0.25em]">{step.n}</p>
+            <h3 class="mt-3 text-lg font-bold">{step.title}</h3>
+            <p class="mt-2 text-bone-400 text-sm leading-relaxed">{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </Container>
+  </section>
+
+  <!-- SERVICE AREA -->
+  <section class="border-b border-ink-800">
+    <Container class="py-20 text-center">
+      <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">WHERE WE WORK</p>
+      <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">All of Gippsland.</h2>
+      <p class="mt-4 text-bone-200 max-w-2xl mx-auto">
+        From Sale to Bairnsdale, Wonthaggi to Warragul — if you're in the region, we cover you.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-2 max-w-3xl mx-auto">
+        {towns.map((t) => (
+          <span class="border border-ink-700 px-4 py-2 text-bone-200 text-sm font-semibold tracking-wide">{t}</span>
+        ))}
+        <span class="border border-ink-700 px-4 py-2 text-bone-400 text-sm font-semibold tracking-wide">…and more</span>
+      </div>
+      <div class="mt-10">
+        <Button href="/services/antennas" variant="ghost">See all towns we service →</Button>
+      </div>
+    </Container>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">START HERE</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Got something in mind?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">Tell us the job — electrical, AV, comms, antenna or all of the above — and we'll come back with a number.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href="/contact#quote-form" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href="tel:0341305012" class="text-center text-ink-950 font-semibold underline">or call 03 4130 5012</a>
+      </div>
+    </Container>
+  </section>
+
 </Base>
