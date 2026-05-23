@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.env
+.env.local
+.git
+.DS_Store
+tests
+playwright-report
+test-results
+coverage
+*.log

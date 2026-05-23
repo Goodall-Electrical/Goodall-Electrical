@@ -1,0 +1,20 @@
+services:
+  website:
+    build: .
+    image: goodall-website:latest
+    container_name: goodall-website
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - submissions:/var/log/goodall
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  submissions:
