@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Container from "../components/ui/Container.astro";
+import SectionHeading from "../components/ui/SectionHeading.astro";
+import { antennaTowns } from "../data/antenna-towns";
+
+export const prerender = true;
+
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection("projects")).sort((a, b) => b.data.year - a.data.year);
+
+const company = [
+  { label: "Home",         href: "/" },
+  { label: "About",        href: "/about" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact",      href: "/contact" },
+  { label: "Request a quote", href: "/quote" },
+];
+---
+<Base title="Sitemap — Goodall Electrical" description="Every page on the Goodall Electrical website, in one place.">
+  <Container class="py-20">
+    <SectionHeading eyebrow="SITEMAP" title="Every page, one list." description="If you'd rather Google's flavour, see the machine-readable sitemap at /sitemap.xml." />
+
+    <div class="mt-16 grid md:grid-cols-2 gap-12">
+      <div>
+        <h2 class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Company</h2>
+        <ul class="mt-5 space-y-2.5">
+          {company.map((c) => (
+            <li><a href={c.href} class="text-bone-200 hover:text-spark-500 transition-colors">{c.label}</a></li>
+          ))}
+        </ul>
+
+        <h2 class="mt-12 text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Services</h2>
+        <ul class="mt-5 space-y-2.5">
+          <li><a href="/services" class="text-bone-200 hover:text-spark-500 transition-colors">All services</a></li>
+          {services.map((s) => (
+            <li><a href={`/services/${s.data.slug}`} class="text-bone-200 hover:text-spark-500 transition-colors">{s.data.title}</a></li>
+          ))}
+        </ul>
+
+        <h2 class="mt-12 text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Projects</h2>
+        <ul class="mt-5 space-y-2.5">
+          <li><a href="/projects" class="text-bone-200 hover:text-spark-500 transition-colors">All projects</a></li>
+          {projects.map((p) => (
+            <li><a href={`/projects/${p.data.slug}`} class="text-bone-200 hover:text-spark-500 transition-colors">{p.data.title}</a></li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Antenna service areas</h2>
+        <ul class="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
+          {antennaTowns.map((t) => (
+            <li><a href={`/services/antennas/${t.slug}`} class="text-bone-200 hover:text-spark-500 transition-colors">{t.name}</a></li>
+          ))}
+        </ul>
+
+        <h2 class="mt-12 text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">For crawlers</h2>
+        <ul class="mt-5 space-y-2.5">
+          <li><a href="/sitemap-index.xml" class="text-bone-200 hover:text-spark-500 transition-colors">/sitemap-index.xml</a> <span class="text-bone-400 text-sm">— XML sitemap index</span></li>
+          <li><a href="/robots.txt" class="text-bone-200 hover:text-spark-500 transition-colors">/robots.txt</a> <span class="text-bone-400 text-sm">— crawler rules</span></li>
+        </ul>
+      </div>
+    </div>
+  </Container>
+</Base>

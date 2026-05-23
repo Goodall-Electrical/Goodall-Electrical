@@ -1,28 +1,107 @@
 ---
 import Container from "../ui/Container.astro";
+import { antennaTowns } from "../../data/antenna-towns";
+
 const year = new Date().getFullYear();
+
+// Show 8 priority towns in the footer area-links column.
+const footerTownSlugs = ["sale", "maffra", "stratford", "heyfield", "longford", "bairnsdale", "traralgon", "morwell"];
+const footerTowns = footerTownSlugs
+  .map((slug) => antennaTowns.find((t) => t.slug === slug))
+  .filter((t): t is (typeof antennaTowns)[number] => Boolean(t));
+
+const services = [
+  { label: "Electrical",            href: "/services/electrical" },
+  { label: "Audio Visual",          href: "/services/audio-visual" },
+  { label: "Control & Automation",  href: "/services/control-automation" },
+  { label: "Communications",        href: "/services/communications" },
+  { label: "TV Antennas",           href: "/services/antennas" },
+  { label: "Request a quote",       href: "/quote" },
+];
+
+const company = [
+  { label: "About",        href: "/about" },
+  { label: "Projects",     href: "/projects" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact",      href: "/contact" },
+];
 ---
-<footer class="border-t border-ink-800 mt-24">
-  <Container class="py-12 grid md:grid-cols-4 gap-10">
-    <div class="md:col-span-2">
-      <img src="/logo.png" alt="Goodall Electrical" width="733" height="243" class="h-16 w-auto" />
-      <p class="mt-4 text-bone-400 text-sm max-w-sm">
-        Commercial & residential electrical, AV, automation, communications and antenna services across Gippsland.
+<footer class="border-t border-ink-800 mt-24 bg-ink-950">
+  <Container class="py-16 grid gap-12 md:grid-cols-12">
+    <!-- Brand / blurb -->
+    <div class="md:col-span-4">
+      <img src="/logo.png" alt="Goodall Electrical" width="733" height="243" class="h-14 w-auto" />
+      <p class="mt-5 text-bone-400 text-sm leading-relaxed max-w-xs">
+        Commercial & residential electrical, audio visual, automation, communications and TV antenna work across Gippsland. Family-owned. Based in Sale.
       </p>
-      <p class="mt-4 text-bone-400 text-xs">ACN 684 711 224</p>
+      <a
+        href="/quote"
+        class="mt-6 inline-flex items-center justify-center px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase bg-spark-500 text-ink-950 hover:bg-spark-600 transition-colors"
+      >
+        Get a quote →
+      </a>
     </div>
-    <div>
-      <p class="text-bone-50 text-sm font-semibold mb-3">Visit</p>
-      <p class="text-bone-400 text-sm">Unit 5/9 Wellington Park Way<br />Sale VIC</p>
+
+    <!-- Services -->
+    <div class="md:col-span-3">
+      <p class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Services</p>
+      <ul class="mt-5 space-y-2.5">
+        {services.map((s) => (
+          <li>
+            <a href={s.href} class="text-bone-200 text-sm hover:text-spark-500 transition-colors">{s.label}</a>
+          </li>
+        ))}
+      </ul>
     </div>
-    <div>
-      <p class="text-bone-50 text-sm font-semibold mb-3">Contact</p>
-      <a href="tel:0341305009" class="text-bone-400 hover:text-spark-500 text-sm block">03 4130 5009</a>
-      <a href="/contact" class="text-bone-400 hover:text-spark-500 text-sm block mt-1">Contact form</a>
+
+    <!-- Service areas (top towns from the antennas data) -->
+    <div class="md:col-span-2">
+      <p class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Areas</p>
+      <ul class="mt-5 space-y-2.5">
+        {footerTowns.map((t) => (
+          <li>
+            <a href={`/services/antennas/${t.slug}`} class="text-bone-200 text-sm hover:text-spark-500 transition-colors">{t.name}</a>
+          </li>
+        ))}
+        <li>
+          <a href="/services/antennas" class="text-bone-400 text-sm hover:text-spark-500 transition-colors">All Gippsland →</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contact + company -->
+    <div class="md:col-span-3 space-y-8">
+      <div>
+        <p class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Contact</p>
+        <div class="mt-5 space-y-2 text-sm">
+          <a href="tel:0341305009" class="text-bone-50 hover:text-spark-500 transition-colors block font-semibold">03 4130 5009</a>
+          <p class="text-bone-400">
+            Unit 5/9 Wellington Park Way<br />
+            Sale VIC 3850
+          </p>
+        </div>
+      </div>
+      <div>
+        <p class="text-spark-500 text-xs font-bold tracking-[0.3em] uppercase">Company</p>
+        <ul class="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5">
+          {company.map((c) => (
+            <li>
+              <a href={c.href} class="text-bone-200 text-sm hover:text-spark-500 transition-colors">{c.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </Container>
-  <Container class="py-4 border-t border-ink-800 text-bone-400 text-xs flex justify-between">
-    <span>© {year} Goodall Electrical</span>
-    <a href="/quote" class="hover:text-spark-500">Request a quote</a>
-  </Container>
+
+  <div class="border-t border-ink-800">
+    <Container class="py-5 flex flex-col md:flex-row gap-3 md:items-center md:justify-between text-bone-400 text-xs">
+      <p>© {year} Goodall Electrical · ACN 684 711 224</p>
+      <div class="flex flex-wrap gap-x-5 gap-y-2">
+        <a href="/sitemap" class="hover:text-spark-500">Sitemap</a>
+        <a href="/services" class="hover:text-spark-500">All services</a>
+        <a href="/projects" class="hover:text-spark-500">Projects</a>
+      </div>
+    </Container>
+  </div>
 </footer>

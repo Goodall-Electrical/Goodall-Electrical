@@ -1,13 +1,19 @@
 ---
 import Container from "../ui/Container.astro";
 
-const clients = [
-  { name: "Sporting Legends",            src: "/logos/sporting-legends.webp" },
-  { name: "Star Hotel",                  src: "/logos/star-hotel.png" },
-  { name: "Greyhound Racing Victoria",   src: "/logos/greyhound-racing-victoria.png" },
-  { name: "Maffra Community Sports Club", src: "/logos/maffra-community-sports-club.png" },
-  { name: "The Vines on Avon",           src: "/logos/the-vines-on-avon.png" },
-  { name: "Wonthaggi Workmen's",         src: "/logos/wonthaggi-workmens.png" },
+interface Client {
+  name: string;
+  src: string;
+  url?: string;
+}
+
+const clients: Client[] = [
+  { name: "Sporting Legends",             src: "/logos/sporting-legends.webp", url: "https://sportinglegends.com.au/" },
+  { name: "Star Hotel",                   src: "/logos/star-hotel.png", url: "https://www.starhotelsale.com.au/" },
+  { name: "Sale Greyhound Club",          src: "/logos/greyhound-racing-victoria.png", url: "https://www.salegreyhoundclub.com.au/" },
+  { name: "Maffra Community Sports Club", src: "/logos/maffra-community-sports-club.png", url: "https://www.maffracommunitysportsclub.com.au/" },
+  { name: "The Vines on Avon",            src: "/logos/the-vines-on-avon.png", url: "https://thevinesonavon.com.au/" },
+  { name: "Wonthaggi Workmen's",          src: "/logos/wonthaggi-workmens.png", url: "https://www.wonthaggiworkers.com.au/" },
 ];
 ---
 <section class="py-16 md:py-20 border-b border-ink-800 bg-ink-950">
@@ -16,12 +22,29 @@ const clients = [
     <ul class="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 md:gap-10 items-center">
       {clients.map((c) => (
         <li class="flex items-center justify-center">
-          <img
-            src={c.src}
-            alt={c.name}
-            loading="lazy"
-            class="client-logo h-12 md:h-16 w-auto max-w-[140px] object-contain"
-          />
+          {c.url ? (
+            <a
+              href={c.url}
+              target="_blank"
+              rel="noopener"
+              aria-label={`Visit ${c.name} website`}
+              class="block"
+            >
+              <img
+                src={c.src}
+                alt={c.name}
+                loading="lazy"
+                class="client-logo h-12 md:h-16 w-auto max-w-[140px] object-contain"
+              />
+            </a>
+          ) : (
+            <img
+              src={c.src}
+              alt={c.name}
+              loading="lazy"
+              class="client-logo h-12 md:h-16 w-auto max-w-[140px] object-contain"
+            />
+          )}
         </li>
       ))}
     </ul>

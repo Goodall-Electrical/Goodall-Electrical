@@ -10,7 +10,7 @@ const services = (await getCollection("services")).sort((a, b) => a.data.order -
 ---
 <Base title="Services — Goodall Electrical" description="Commercial and residential electrical, audio visual, automation, communications and antenna services.">
   <Container class="py-20">
-    <SectionHeading eyebrow="OUR SERVICES" title="What we do — and how we do it." description="Five disciplines, fully in-house. No subcontracting the work we're known for." />
+    <SectionHeading eyebrow="OUR SERVICES" title="What we do — and how we do it." description="Five trades, fully in-house. No subcontracting the work we're known for." />
     <div class="mt-16 grid md:grid-cols-2 gap-px bg-ink-700 border border-ink-700">
       {services.map((s) => (
         <a href={`/services/${s.data.slug}`} class="bg-ink-950 hover:bg-ink-900 p-8 transition-colors group">

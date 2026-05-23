@@ -8,7 +8,7 @@ const featured = (await getCollection("projects"))
   .sort((a, b) => b.data.year - a.data.year)
   .slice(0, 3);
 ---
-<section class="py-20 md:py-28 border-b border-ink-800">
+<section id="featured-projects" class="py-20 md:py-28 border-b border-ink-800 scroll-mt-24">
   <Container>
     <div class="flex items-end justify-between gap-6 flex-wrap">
       <SectionHeading eyebrow="SELECTED WORK" title="Venues we've worked with." />

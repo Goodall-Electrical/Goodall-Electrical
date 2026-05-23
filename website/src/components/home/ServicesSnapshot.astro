@@ -7,7 +7,7 @@ const services = (await getCollection("services")).sort((a, b) => a.data.order -
 ---
 <section class="py-20 md:py-28 border-b border-ink-800">
   <Container>
-    <SectionHeading eyebrow="WHAT WE DO" title="Five disciplines, one team." description="From new builds to maintenance — we take it all on under one roof." />
+    <SectionHeading eyebrow="WHAT WE DO" title="Five trades, one team." description="From new builds to maintenance — we take it all on under one roof." />
     <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-px bg-ink-700 border border-ink-700">
       {services.map((s) => (
         <a href={`/services/${s.data.slug}`} class="bg-ink-950 hover:bg-ink-900 p-6 transition-colors group flex flex-col">
