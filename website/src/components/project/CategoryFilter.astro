@@ -1,0 +1,35 @@
+---
+interface Props { categories: string[]; }
+const { categories } = Astro.props;
+---
+<div class="flex flex-wrap gap-2" data-filter-controls>
+  <button type="button" data-filter="all" class="px-4 py-2 text-xs font-bold tracking-[0.15em] uppercase border border-spark-500 bg-spark-500 text-ink-950">All</button>
+  {categories.map((c) => (
+    <button type="button" data-filter={c} class="px-4 py-2 text-xs font-bold tracking-[0.15em] uppercase border border-ink-700 text-bone-200 hover:border-spark-500 hover:text-spark-500">
+      {c}
+    </button>
+  ))}
+</div>
+
+<script>
+  const controls = document.querySelector("[data-filter-controls]");
+  const grid = document.querySelector("[data-project-grid]");
+  if (controls && grid) {
+    const buttons = controls.querySelectorAll<HTMLButtonElement>("button[data-filter]");
+    const cards = grid.querySelectorAll<HTMLElement>("[data-category]");
+    const setActive = (active: string) => {
+      buttons.forEach((b) => {
+        const on = b.dataset.filter === active;
+        b.classList.toggle("bg-spark-500", on);
+        b.classList.toggle("text-ink-950", on);
+        b.classList.toggle("border-spark-500", on);
+        b.classList.toggle("border-ink-700", !on);
+        b.classList.toggle("text-bone-200", !on);
+      });
+      cards.forEach((card) => {
+        card.hidden = active !== "all" && card.dataset.category !== active;
+      });
+    };
+    buttons.forEach((b) => b.addEventListener("click", () => setActive(b.dataset.filter || "all")));
+  }
+</script>

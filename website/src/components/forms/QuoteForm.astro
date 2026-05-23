@@ -1,0 +1,77 @@
+---
+import FormField from "./FormField.astro";
+import Button from "../ui/Button.astro";
+
+const jobTypes: [string, string][] = [
+  ["electrical", "Electrical"],
+  ["audio-visual", "Audio Visual"],
+  ["automation", "Automation"],
+  ["communications", "Communications"],
+  ["antenna", "Antenna"],
+  ["multiple", "Multiple"],
+];
+
+const siteTypes: [string, string][] = [
+  ["hospitality", "Hospitality"],
+  ["commercial", "Commercial"],
+  ["residential", "Residential"],
+];
+
+const urgencies: [string, string][] = [
+  ["emergency", "Emergency"],
+  ["within-a-week", "Within a week"],
+  ["within-a-month", "Within a month"],
+  ["planning", "Planning ahead"],
+];
+---
+<form method="POST" action="/api/quote" enctype="multipart/form-data" class="space-y-6">
+  <div class="grid md:grid-cols-2 gap-6">
+    <FormField name="name" label="Your name" required autocomplete="name" />
+    <FormField name="email" label="Email" type="email" required autocomplete="email" />
+    <FormField name="phone" label="Phone" type="tel" required autocomplete="tel" />
+    <FormField name="siteAddress" label="Site address" required autocomplete="street-address" />
+  </div>
+
+  <fieldset>
+    <legend class="text-xs font-bold tracking-[0.2em] uppercase text-bone-200">Job type<span class="text-spark-500">*</span></legend>
+    <div class="mt-3 grid grid-cols-2 md:grid-cols-3 gap-2">
+      {jobTypes.map(([v, l]) => (
+        <label class="flex items-center gap-2 border border-ink-700 px-4 py-3 cursor-pointer hover:border-spark-500 has-[:checked]:border-spark-500 has-[:checked]:bg-ink-900">
+          <input type="radio" name="jobType" value={v} required class="accent-spark-500" />
+          <span class="text-bone-50 text-sm">{l}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-xs font-bold tracking-[0.2em] uppercase text-bone-200">Site type<span class="text-spark-500">*</span></legend>
+    <div class="mt-3 grid grid-cols-3 gap-2">
+      {siteTypes.map(([v, l]) => (
+        <label class="flex items-center gap-2 border border-ink-700 px-4 py-3 cursor-pointer hover:border-spark-500 has-[:checked]:border-spark-500 has-[:checked]:bg-ink-900">
+          <input type="radio" name="siteType" value={v} required class="accent-spark-500" />
+          <span class="text-bone-50 text-sm">{l}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-xs font-bold tracking-[0.2em] uppercase text-bone-200">Urgency<span class="text-spark-500">*</span></legend>
+    <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2">
+      {urgencies.map(([v, l]) => (
+        <label class="flex items-center gap-2 border border-ink-700 px-4 py-3 cursor-pointer hover:border-spark-500 has-[:checked]:border-spark-500 has-[:checked]:bg-ink-900">
+          <input type="radio" name="urgency" value={v} required class="accent-spark-500" />
+          <span class="text-bone-50 text-sm">{l}</span>
+        </label>
+      ))}
+    </div>
+  </fieldset>
+
+  <FormField name="description" label="Tell us about the job" type="textarea" required rows={6} />
+
+  <input type="text" name="_hp" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+
+  <Button type="submit">Send my quote request</Button>
+  <p class="text-bone-400 text-sm">We'll come back to you within one business day.</p>
+</form>

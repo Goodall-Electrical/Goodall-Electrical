@@ -1,19 +1,18 @@
 ---
 import Base from "../layouts/Base.astro";
-import Container from "../components/ui/Container.astro";
-import Button from "../components/ui/Button.astro";
+import Hero from "../components/home/Hero.astro";
+import ServicesSnapshot from "../components/home/ServicesSnapshot.astro";
+import FeaturedProjects from "../components/home/FeaturedProjects.astro";
+import ClientLogos from "../components/home/ClientLogos.astro";
+import TestimonialStrip from "../components/home/TestimonialStrip.astro";
+import QuoteCTA from "../components/home/QuoteCTA.astro";
 export const prerender = true;
 ---
 <Base title="Goodall Electrical — Commercial & Residential Electricians, Gippsland">
-  <Container class="py-24">
-    <p class="text-spark-500 tracking-[0.3em] text-xs font-semibold">EST. SALE, VIC</p>
-    <h1 class="mt-4 text-6xl font-extrabold tracking-tight">Power for the pros.</h1>
-    <p class="mt-6 text-bone-200 max-w-xl text-lg">
-      Goodall Electrical delivers commercial-grade electrical, AV, automation and comms work across the Gippsland region.
-    </p>
-    <div class="mt-8 flex gap-3">
-      <Button href="/quote">Get a quote</Button>
-      <Button href="/projects" variant="ghost">Our work</Button>
-    </div>
-  </Container>
+  <Hero />
+  <ServicesSnapshot />
+  <FeaturedProjects />
+  <ClientLogos />
+  <TestimonialStrip />
+  <QuoteCTA />
 </Base>

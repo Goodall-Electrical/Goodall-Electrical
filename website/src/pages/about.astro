@@ -1,0 +1,56 @@
+---
+import Base from "../layouts/Base.astro";
+import Container from "../components/ui/Container.astro";
+import Button from "../components/ui/Button.astro";
+export const prerender = true;
+---
+<Base title="About — Goodall Electrical">
+  <Container class="py-20">
+    <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">ABOUT</p>
+    <h1 class="mt-3 text-5xl md:text-6xl font-extrabold tracking-tight">Tradesmen, first.</h1>
+    <p class="mt-6 text-bone-200 text-xl max-w-3xl">
+      Goodall Electrical is a Sale-based contracting business serving Gippsland's clubs, pubs, commercial sites and family homes. We do the work other contractors subcontract out — electrical, AV, automation, comms and antennas — under one roof.
+    </p>
+    <div class="mt-16 grid md:grid-cols-3 gap-10">
+      <div>
+        <p class="text-spark-500 font-extrabold text-4xl">5</p>
+        <p class="mt-2 text-bone-200">In-house disciplines, from switchboards to sports-bar AV.</p>
+      </div>
+      <div>
+        <p class="text-spark-500 font-extrabold text-4xl">Gippsland</p>
+        <p class="mt-2 text-bone-200">Our service area covers Sale, Wonthaggi, Maffra and surrounds.</p>
+      </div>
+      <div>
+        <p class="text-spark-500 font-extrabold text-4xl">Licensed</p>
+        <p class="mt-2 text-bone-200">Fully licensed and insured. ACN 684 711 224.</p>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <h2 class="text-3xl font-extrabold">What working with us looks like.</h2>
+      <ol class="mt-8 space-y-6 max-w-2xl">
+        <li class="border-l-2 border-spark-500 pl-6">
+          <p class="text-spark-500 font-bold text-sm tracking-[0.2em]">01 — SITE VISIT</p>
+          <p class="mt-1 text-bone-200">We come out, look at the job, and listen. No charge for a quote on most jobs.</p>
+        </li>
+        <li class="border-l-2 border-spark-500 pl-6">
+          <p class="text-spark-500 font-bold text-sm tracking-[0.2em]">02 — SCOPE & QUOTE</p>
+          <p class="mt-1 text-bone-200">We come back with a clear written quote — labour, materials, timeline, all itemised.</p>
+        </li>
+        <li class="border-l-2 border-spark-500 pl-6">
+          <p class="text-spark-500 font-bold text-sm tracking-[0.2em]">03 — DO THE JOB</p>
+          <p class="mt-1 text-bone-200">Our team does the work. We coordinate with any other trades on site and clean up after ourselves.</p>
+        </li>
+        <li class="border-l-2 border-spark-500 pl-6">
+          <p class="text-spark-500 font-bold text-sm tracking-[0.2em]">04 — HAND OVER</p>
+          <p class="mt-1 text-bone-200">Compliance paperwork, certificates, and a walk-through so your team knows what was done and how it works.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="mt-16 flex gap-3">
+      <Button href="/quote">Get a quote</Button>
+      <Button href="/projects" variant="ghost">See our work</Button>
+    </div>
+  </Container>
+</Base>

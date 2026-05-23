@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../ui/Container.astro";
+import SectionHeading from "../ui/SectionHeading.astro";
+
+const featured = (await getCollection("projects"))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 3);
+---
+<section class="py-20 md:py-28 border-b border-ink-800">
+  <Container>
+    <div class="flex items-end justify-between gap-6 flex-wrap">
+      <SectionHeading eyebrow="SELECTED WORK" title="Venues we've wired." />
+      <a href="/projects" class="text-spark-500 text-sm font-semibold hover:text-spark-600">All projects →</a>
+    </div>
+    <div class="mt-12 grid md:grid-cols-3 gap-6">
+      {featured.map((p) => (
+        <a href={`/projects/${p.data.slug}`} class="group block bg-ink-900 border border-ink-800 hover:border-spark-500 transition-colors">
+          <div class="aspect-[4/3] bg-ink-800 overflow-hidden">
+            <img src={p.data.heroImage} alt={p.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+          </div>
+          <div class="p-5">
+            <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">{p.data.category}</p>
+            <h3 class="mt-2 text-lg font-bold">{p.data.title}</h3>
+            <p class="mt-1 text-bone-400 text-sm">{p.data.client} · {p.data.year}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </Container>
+</section>

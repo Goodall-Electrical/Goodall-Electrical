@@ -1,0 +1,12 @@
+---
+import FormField from "./FormField.astro";
+import Button from "../ui/Button.astro";
+---
+<form method="POST" action="/api/contact" enctype="application/x-www-form-urlencoded" class="space-y-6 max-w-xl">
+  <FormField name="name" label="Your name" required autocomplete="name" />
+  <FormField name="email" label="Email" type="email" required autocomplete="email" />
+  <FormField name="phone" label="Phone" type="tel" required autocomplete="tel" />
+  <FormField name="message" label="What do you need?" type="textarea" required rows={5} />
+  <input type="text" name="_hp" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+  <Button type="submit">Send message</Button>
+</form>

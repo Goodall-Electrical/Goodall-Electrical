@@ -1,0 +1,24 @@
+---
+import Container from "../ui/Container.astro";
+
+const clients = [
+  "Sporting Legends",
+  "Star Hotel",
+  "Greyhound Racing Victoria",
+  "Maffra Community Sports Club",
+  "The Vines on Avon",
+  "Wonthaggi Workmen's",
+];
+---
+<section class="py-12 border-b border-ink-800">
+  <Container>
+    <p class="text-bone-400 text-xs font-bold tracking-[0.3em] uppercase text-center">Trusted by venues across Gippsland</p>
+    <ul class="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
+      {clients.map((name) => (
+        <li class="border border-ink-800 px-4 py-6 text-center text-bone-200 text-sm font-semibold tracking-wide hover:border-spark-500 hover:text-bone-50 transition-colors">
+          {name}
+        </li>
+      ))}
+    </ul>
+  </Container>
+</section>

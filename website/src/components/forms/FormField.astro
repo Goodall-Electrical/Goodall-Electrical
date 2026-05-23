@@ -1,0 +1,24 @@
+---
+interface Props {
+  name: string;
+  label: string;
+  type?: "text" | "email" | "tel" | "textarea";
+  required?: boolean;
+  rows?: number;
+  autocomplete?: string;
+}
+const { name, label, type = "text", required = false, rows = 4, autocomplete } = Astro.props;
+const id = `field-${name}`;
+---
+<label for={id} class="block">
+  <span class="text-xs font-bold tracking-[0.2em] uppercase text-bone-200">
+    {label}{required && <span class="text-spark-500">*</span>}
+  </span>
+  {type === "textarea" ? (
+    <textarea id={id} name={name} rows={rows} required={required}
+      class="mt-2 w-full bg-ink-900 border border-ink-700 px-4 py-3 text-bone-50 placeholder-bone-400 focus:border-spark-500 focus:outline-none"></textarea>
+  ) : (
+    <input id={id} name={name} type={type} required={required} autocomplete={autocomplete}
+      class="mt-2 w-full bg-ink-900 border border-ink-700 px-4 py-3 text-bone-50 placeholder-bone-400 focus:border-spark-500 focus:outline-none" />
+  )}
+</label>

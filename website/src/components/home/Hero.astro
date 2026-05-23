@@ -1,0 +1,21 @@
+---
+import Container from "../ui/Container.astro";
+import Button from "../ui/Button.astro";
+---
+<section class="relative border-b border-ink-800">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_45%)] opacity-10"></div>
+  <Container class="relative py-24 md:py-32">
+    <p class="text-spark-500 tracking-[0.3em] text-xs font-semibold">SALE, VIC // ACN 684 711 224</p>
+    <h1 class="mt-6 text-5xl md:text-7xl font-extrabold tracking-tight leading-[0.95]">
+      Power<br />
+      for the <span class="text-spark-500">pros.</span>
+    </h1>
+    <p class="mt-6 text-bone-200 max-w-xl text-lg">
+      Commercial-grade electrical, audio visual, automation and communications work across Gippsland — from venues and pubs to family homes.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <Button href="/quote">Get a quote</Button>
+      <Button href="/projects" variant="ghost">See our work</Button>
+    </div>
+  </Container>
+</section>

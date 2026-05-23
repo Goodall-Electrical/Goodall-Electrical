@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import CategoryFilter from "../../components/project/CategoryFilter.astro";
+
+export const prerender = true;
+
+const projects = (await getCollection("projects")).sort((a, b) => b.data.year - a.data.year);
+const categories = Array.from(new Set(projects.map((p) => p.data.category)));
+---
+<Base title="Projects — Goodall Electrical" description="Selected venue, commercial and residential work from across Gippsland.">
+  <Container class="py-20">
+    <SectionHeading eyebrow="OUR WORK" title="Selected projects." description="Filter by category — every project is a real job we've handled end-to-end." />
+    <div class="mt-10">
+      <CategoryFilter categories={categories} />
+    </div>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6" data-project-grid>
+      {projects.map((p) => (
+        <a href={`/projects/${p.data.slug}`} data-category={p.data.category} class="group block bg-ink-900 border border-ink-800 hover:border-spark-500 transition-colors">
+          <div class="aspect-[4/3] bg-ink-800 overflow-hidden">
+            <img src={p.data.heroImage} alt={p.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
+          </div>
+          <div class="p-5">
+            <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">{p.data.category}</p>
+            <h3 class="mt-2 text-lg font-bold">{p.data.title}</h3>
+            <p class="mt-1 text-bone-400 text-sm">{p.data.client} · {p.data.year}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </Container>
+</Base>

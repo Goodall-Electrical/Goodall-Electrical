@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+
+export const prerender = true;
+
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Services — Goodall Electrical" description="Commercial and residential electrical, audio visual, automation, communications and antenna services.">
+  <Container class="py-20">
+    <SectionHeading eyebrow="OUR SERVICES" title="What we do — and how we do it." description="Five disciplines, fully in-house. No subcontracting the work we're known for." />
+    <div class="mt-16 grid md:grid-cols-2 gap-px bg-ink-700 border border-ink-700">
+      {services.map((s) => (
+        <a href={`/services/${s.data.slug}`} class="bg-ink-950 hover:bg-ink-900 p-8 transition-colors group">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.2em]">0{s.data.order}</p>
+          <h2 class="mt-3 text-2xl font-bold">{s.data.title}</h2>
+          <p class="mt-3 text-bone-200">{s.data.summary}</p>
+          <span class="mt-5 inline-block text-spark-500 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
+        </a>
+      ))}
+    </div>
+  </Container>
+</Base>
