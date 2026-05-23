@@ -8,7 +8,7 @@ export const contactSchema = z.object({
   email: z.string().email().max(254),
   phone: trimmed(5, 40),
   message: trimmed(1, 5000),
-  _hp: z.string().max(0).optional().or(z.literal("")),
+  _hp: z.string().optional().default(""),
 });
 
 export const JOB_TYPES = ["electrical", "audio-visual", "automation", "communications", "antenna", "multiple"] as const;
@@ -24,7 +24,7 @@ export const quoteSchema = z.object({
   urgency: z.enum(URGENCY),
   siteAddress: trimmed(1, 500),
   description: trimmed(1, 5000),
-  _hp: z.string().max(0).optional().or(z.literal("")),
+  _hp: z.string().optional().default(""),
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;
