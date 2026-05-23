@@ -1,0 +1,190 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import { business } from "../../data/business";
+
+export const prerender = true;
+
+const title = "Communications & Networks — Gippsland | Goodall Electrical";
+const description = "Structured cabling, Wi-Fi coverage, CCTV networks, EFTPOS lines and comms-room cleanups across Gippsland. We pull the cable, terminate the ports, configure the gear and document the rack.";
+
+const problems = [
+  { title: "Wi-Fi dead spots",                  body: "Bad placement, wrong AP density, or interference. We heat-map the venue, identify where coverage actually drops out, and place APs to fix it — not just to add more." },
+  { title: "EFTPOS / POS keeps disconnecting", body: "Usually a flaky cable run, an overloaded switch port, or shared comms with too much chatter. We trace it properly with the tools and fix the cause, not the symptom." },
+  { title: "Comms room that nobody can read", body: "Spaghetti rack, no labels, no documentation. We cut the rack back, terminate cleanly, label every port, and leave you with a diagram." },
+  { title: "Adding network points",            body: "New work area, new POS terminal, new TV with smart streaming — we run Cat6/Cat6A, terminate to a patch panel, and balance the network so the new gear doesn't degrade the old." },
+  { title: "CCTV that nobody can actually use",   body: "Bad camera placement, low-spec NVR, no remote access. We design coverage that works, run shielded cable, and set up secure remote viewing for the manager." },
+  { title: "New site or fitout",                body: "Greenfield comms — we design the rack layout, plan cable routes around mechanical and electrical, and install + commission ready for the fit-out crew to follow." },
+];
+
+const services = [
+  "Cat6 / Cat6A structured cabling and patch panels",
+  "Wi-Fi heat-mapping, AP placement, coverage tuning",
+  "CCTV cabling, NVR setup, secure remote access",
+  "EFTPOS, POS and back-office network design",
+  "Switch and router installation + configuration",
+  "Comms-room cleanups and full documentation",
+  "Fibre patching and termination",
+  "Network performance testing and reporting",
+];
+
+const faqs = [
+  {
+    q: "Do you do residential as well as commercial?",
+    a: "Mostly commercial — venues, motels, small offices, retail fitouts. We do some residential structured cabling for new builds and major renos, but we're not the right call for a home Wi-Fi extender or smart-TV streaming fix.",
+  },
+  {
+    q: "Can you configure the switches and APs, or just run the cable?",
+    a: "Both. We pull the cable, terminate the ports, install the switches and APs, configure them, and document what we've done. You're not left with a working cable plant and a pile of unconfigured boxes.",
+  },
+  {
+    q: "How much does a network install cost?",
+    a: `Heavily dependent on cable count and complexity. A handful of new points + a small switch is half a day; a full venue comms refit is multiple days plus commissioning. We quote on site. Service-call rate during business hours is $149 inc GST for the first 30 minutes, then $125 per hour + GST; after-hours is $195 per hour + GST.`,
+  },
+  {
+    q: "Do you handle data + electrical at the same time?",
+    a: "Yes — we're licensed electricians, so we coordinate the power runs with the data cabling in a single pass. Saves a second crew, saves coordination meetings, saves cable being chased twice through the same wall.",
+  },
+  {
+    q: "What about ongoing support?",
+    a: "We offer maintenance contracts for venues that want a one-call resource for both the electrical and the comms — covers planned maintenance, change requests and break-fix callouts.",
+  },
+];
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Communications & Network Cabling",
+  "audience": { "@type": "Audience", "audienceType": "Hospitality venues, commercial sites" },
+  "provider": {
+    "@type": "Electrician",
+    "name": business.name,
+    "telephone": business.phone.international,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": business.address.street,
+      "addressLocality": business.address.locality,
+      "addressRegion": business.address.region,
+      "postalCode": business.address.postcode,
+      "addressCountry": business.address.country,
+    },
+  },
+  "areaServed": business.serviceArea.full,
+  "url": new URL("/services/communications", Astro.site).toString(),
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((f) => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+---
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-28">
+      <a href="/services" class="text-spark-500 text-sm font-semibold">← All services</a>
+      <p class="mt-6 text-spark-500 tracking-[0.3em] text-xs font-bold">CABLING · WI-FI · CCTV · GIPPSLAND</p>
+      <h1 class="mt-3 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1]">
+        Keeping<br />the data <span class="text-spark-500">moving.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        Structured cabling, Wi-Fi coverage, CCTV networks, EFTPOS and POS lines for Gippsland venues and businesses. We pull the cable, terminate the ports, configure the gear, and leave the rack labelled and documented.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="/contact#quote-form">Book a site walk</Button>
+        <a href={`tel:${business.phone.tel}`} class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500 whitespace-nowrap">
+          Call {business.phone.display}
+        </a>
+      </div>
+      <ul class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl text-sm text-bone-200">
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Wi-Fi heat-mapping</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Cat6 / Cat6A cabling</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> CCTV + remote access</li>
+        <li class="flex items-start gap-2"><span class="text-spark-500">⚡</span> Documented rack work</li>
+      </ul>
+    </Container>
+  </section>
+
+  <!-- COMMON PROBLEMS -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="THE WORK" title="What we get called for." description="If the gear is plugged in and the data still isn't moving, the answer is almost always between the wall and the cabinet. We trace it properly." />
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {problems.map((p) => (
+          <div class="border border-ink-800 bg-ink-900 p-6 hover:border-spark-500 transition-colors">
+            <h3 class="text-lg font-bold">{p.title}</h3>
+            <p class="mt-3 text-bone-200 text-sm leading-relaxed">{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <SectionHeading eyebrow="WHAT WE DO" title="Cable, configure, document, leave." />
+          <p class="mt-6 text-bone-200">We don't drop the gear and run. We design the layout, run the cable, terminate to a patch panel, install + configure the switches and APs, test every port, and leave you with a diagram and labels that match. Future trades aren't guessing.</p>
+          <div class="mt-8 flex gap-3">
+            <Button href="/contact#quote-form">Get a quote</Button>
+            <Button href="/services" variant="ghost">All services</Button>
+          </div>
+        </div>
+        <ul class="space-y-3">
+          {services.map((s) => (
+            <li class="flex gap-3 items-start text-bone-200 border-b border-ink-800 pb-3">
+              <span class="text-spark-500 font-bold mt-0.5">→</span>
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow="FAQ" title="Comms questions, answered." />
+      <div class="mt-12 space-y-3">
+        {faqs.map((f) => (
+          <details class="border border-ink-800 bg-ink-900 group">
+            <summary class="px-6 py-4 cursor-pointer text-bone-50 font-semibold flex items-center justify-between gap-4 hover:bg-ink-800 transition-colors">
+              <span>{f.q}</span>
+              <span class="text-spark-500 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+            </summary>
+            <div class="px-6 pb-5 text-bone-200 leading-relaxed">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">BOOK A SITE WALK</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Comms job to scope?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">We'll come out, look at the room, the rack and the routing — then quote based on what we actually saw rather than guesses. No charge for the visit.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href="/contact#quote-form" class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href={`tel:${business.phone.tel}`} class="text-center text-ink-950 font-semibold underline whitespace-nowrap">or call {business.phone.display}</a>
+      </div>
+    </Container>
+  </section>
+</Base>

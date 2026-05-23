@@ -23,9 +23,12 @@ export const GET: APIRoute = async ({ site }) => {
 
   const urls: Url[] = [
     { loc: `${origin}/`,               lastmod: now, priority: 1.0, changefreq: "weekly"  },
-    { loc: `${origin}/services/`,      lastmod: now, priority: 0.9, changefreq: "monthly" },
-    { loc: `${origin}/services/electrical/`, lastmod: now, priority: 0.9, changefreq: "monthly" },
-    { loc: `${origin}/services/antennas/`, lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/`,                       lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/electrical/`,            lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/audio-visual/`,          lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/control-automation/`,    lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/communications/`,        lastmod: now, priority: 0.9, changefreq: "monthly" },
+    { loc: `${origin}/services/antennas/`,              lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/projects/`,      lastmod: now, priority: 0.7, changefreq: "monthly" },
     { loc: `${origin}/about/`,         lastmod: now, priority: 0.6, changefreq: "monthly" },
     { loc: `${origin}/testimonials/`,  lastmod: now, priority: 0.6, changefreq: "monthly" },
@@ -33,8 +36,17 @@ export const GET: APIRoute = async ({ site }) => {
     { loc: `${origin}/sitemap/`,       lastmod: now, priority: 0.4, changefreq: "monthly" },
   ];
 
-  // Service detail pages — skip ones with custom landings already in the list above.
-  const customLandings = new Set(["antennas", "electrical"]);
+  // Every service currently has a custom landing page hardcoded above,
+  // so the services collection iteration is a no-op at present. Keeping
+  // the loop in place — if a sixth service is ever added without a
+  // custom page, it'll automatically appear in the sitemap.
+  const customLandings = new Set([
+    "antennas",
+    "electrical",
+    "audio-visual",
+    "control-automation",
+    "communications",
+  ]);
   for (const s of services) {
     if (customLandings.has(s.data.slug)) continue;
     urls.push({
