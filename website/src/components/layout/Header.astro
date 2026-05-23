@@ -1,0 +1,28 @@
+---
+import Container from "../ui/Container.astro";
+import Button from "../ui/Button.astro";
+
+const nav = [
+  { label: "Services", href: "/services" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+---
+<header class="border-b border-ink-800 bg-ink-950/80 backdrop-blur sticky top-0 z-50">
+  <Container class="flex items-center justify-between py-4">
+    <a href="/" class="flex items-baseline gap-2 group">
+      <span class="text-spark-500 font-extrabold text-xl tracking-tight group-hover:text-spark-600">GOODALL</span>
+      <span class="text-bone-400 text-xs tracking-[0.3em]">ELECTRICAL</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8">
+      {nav.map((item) => (
+        <a href={item.href} class="text-sm text-bone-200 hover:text-spark-500 transition-colors">
+          {item.label}
+        </a>
+      ))}
+      <Button href="/quote">Get a quote</Button>
+    </nav>
+    <a href="/quote" class="md:hidden text-spark-500 text-sm font-semibold">Quote →</a>
+  </Container>
+</header>

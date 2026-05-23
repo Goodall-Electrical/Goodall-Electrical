@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  /* Bold Industrial palette */
+  --color-ink-950: #0a0a0a;
+  --color-ink-900: #111111;
+  --color-ink-800: #1a1a1a;
+  --color-ink-700: #2a2a2a;
+  --color-bone-50:  #fafaf7;
+  --color-bone-200: #d6d4cc;
+  --color-bone-400: #8a8780;
+  --color-spark-500: #ffd60a;
+  --color-spark-600: #e6c000;
+
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+}
+
+html {
+  background: var(--color-ink-950);
+  color: var(--color-bone-50);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-spark-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
