@@ -1,0 +1,227 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import Button from "../../components/ui/Button.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import { towns, type Town } from "../../data/towns";
+import { antennaTowns } from "../../data/antenna-towns";
+import { electricalTowns } from "../../data/electrical-towns";
+import { business } from "../../data/business";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return towns.map((town) => ({
+    params: { town: town.slug },
+    props: { town },
+  }));
+}
+
+interface Props { town: Town; }
+const { town } = Astro.props;
+
+const title = `Electrician, AV & Antennas in ${town.name} | Goodall Electrical`;
+const description = `Goodall Electrical services ${town.name} (${town.postcode}) — licensed electricians, audio visual, control & automation, communications and TV antenna work. Same crew handles the lot. Call ${business.phone.display}.`;
+
+// Cross-references to service-specific town pages where they exist.
+const hasAntennaPage = antennaTowns.some((t) => t.slug === town.slug);
+const hasElectricalPage = electricalTowns.some((t) => t.slug === town.slug);
+
+// All five services + where each one's town-page lives (if any).
+const services = [
+  {
+    title: "Electrical",
+    href: hasElectricalPage ? `/services/electrical/${town.slug}` : "/services/electrical",
+    body: `Switchboards, EV chargers, three-phase, lighting, point additions, compliance. Residential and commercial work in ${town.name}.`,
+    cta: hasElectricalPage ? `Electrician in ${town.name} →` : "Electrical services →",
+  },
+  {
+    title: "Audio Visual",
+    href: "/services/audio-visual",
+    body: "Pub, club and venue AV — source switching, multi-zone audio, screen networks, projector installs, touch-panel control.",
+    cta: "AV services →",
+  },
+  {
+    title: "Control & Automation",
+    href: "/services/control-automation",
+    body: "Lighting, HVAC and venue-control automation — bring the equipment you've already paid for under one panel staff can run from a tablet.",
+    cta: "Automation services →",
+  },
+  {
+    title: "Communications & Networks",
+    href: "/services/communications",
+    body: "Structured cabling, Wi-Fi, CCTV, EFTPOS and POS networks. Documented, labelled, future trades can follow.",
+    cta: "Comms services →",
+  },
+  {
+    title: "TV Antennas",
+    href: hasAntennaPage ? `/services/antennas/${town.slug}` : "/services/antennas",
+    body: `Residential antenna installation, signal-meter diagnosis, reception repairs, extra TV points. Matchmaster antennas as standard.`,
+    cta: hasAntennaPage ? `Antennas in ${town.name} →` : "Antenna services →",
+  },
+];
+
+const nearbyTowns = town.nearby
+  .map((slug) => towns.find((t) => t.slug === slug))
+  .filter((t): t is Town => Boolean(t));
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "Electrician",
+  "name": business.name,
+  "telephone": business.phone.international,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": business.address.street,
+    "addressLocality": business.address.locality,
+    "addressRegion": business.address.region,
+    "postalCode": business.address.postcode,
+    "addressCountry": business.address.country,
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": town.name,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": town.name,
+      "postalCode": town.postcode,
+      "addressRegion": "VIC",
+      "addressCountry": "AU",
+    },
+  },
+  "url": new URL(`/areas/${town.slug}`, Astro.site).toString(),
+};
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", position: 1, name: "Service Areas", item: new URL("/areas", Astro.site).toString() },
+    { "@type": "ListItem", position: 2, name: town.name,      item: new URL(`/areas/${town.slug}`, Astro.site).toString() },
+  ],
+};
+
+// Split intro into paragraphs for cleaner rendering.
+const introParagraphs = town.intro.split("\n\n");
+---
+<Base title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)}></script>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-24">
+      <nav class="text-bone-400 text-sm flex flex-wrap items-center gap-2" aria-label="Breadcrumb">
+        <a href="/areas" class="hover:text-spark-500">Service Areas</a>
+        <span>/</span>
+        <span class="text-bone-200">{town.name}</span>
+      </nav>
+      <p class="mt-6 text-spark-500 tracking-[0.3em] text-xs font-bold">{town.region.toUpperCase()} · {town.postcode}</p>
+      <h1 class="mt-3 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1]">
+        Electrician, AV<br />and antennas in<br /><span class="text-spark-500">{town.name}.</span>
+      </h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        Goodall Electrical covers {town.name} for the full five-service mix — electrical, audio visual, automation, communications and TV antennas. Same crew, one quote, one invoice.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href={`/contact?town=${town.slug}#quote-form`}>Book a {town.name} job</Button>
+        <a href={`tel:${business.phone.tel}`} class="inline-flex items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors border border-ink-700 text-bone-50 hover:border-spark-500 hover:text-spark-500 whitespace-nowrap">
+          Call {business.phone.display}
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- ABOUT THE TOWN + WORK -->
+  <section class="py-20 border-b border-ink-800">
+    <Container size="narrow">
+      <SectionHeading eyebrow={`ABOUT ${town.name.toUpperCase()}`} title={`Working in ${town.name}.`} />
+      <div class="mt-8 space-y-5 text-bone-200 text-lg leading-relaxed">
+        {introParagraphs.map((p) => <p>{p}</p>)}
+      </div>
+    </Container>
+  </section>
+
+  <!-- SERVICES OFFERED -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="WHAT WE OFFER" title={`Our services in ${town.name}.`} description="Five trades under one roof — pick the one you need or call us if it's a multi-trade job." />
+      <div class="mt-12 grid md:grid-cols-2 gap-px bg-ink-700 border border-ink-700">
+        {services.map((s) => (
+          <a href={s.href} class="group bg-ink-950 hover:bg-ink-900 p-6 md:p-8 transition-colors flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-extrabold tracking-tight group-hover:text-spark-500 transition-colors">{s.title}</h3>
+              <p class="mt-3 text-bone-200 leading-relaxed">{s.body}</p>
+            </div>
+            <span class="mt-6 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">{s.cta}</span>
+          </a>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- RATES (single source from business.ts) -->
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="RATES" title="What it costs." description="Same rates everywhere in Gippsland — flat call-out, hourly labour after that. No surprises on the invoice." />
+      <div class="mt-12 grid md:grid-cols-3 gap-px bg-ink-700 border border-ink-700">
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.serviceCall.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.serviceCall.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.serviceCall.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.serviceCall.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.serviceCall.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.continuingLabour.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.continuingLabour.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.continuingLabour.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.continuingLabour.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.continuingLabour.detail}</p>
+        </div>
+        <div class="bg-ink-950 p-6 md:p-8">
+          <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{business.antennaRates.afterHours.label}</p>
+          <p class="mt-3 text-bone-400 text-xs tracking-[0.2em] uppercase">{business.antennaRates.afterHours.tagline}</p>
+          <p class="mt-4 text-4xl md:text-5xl font-extrabold tracking-tight text-bone-50">${business.antennaRates.afterHours.amount}<span class="text-spark-500 text-2xl ml-1 whitespace-nowrap">{business.antennaRates.afterHours.priceSuffix}</span></p>
+          <p class="mt-3 text-bone-200 text-sm">{business.antennaRates.afterHours.detail}</p>
+        </div>
+      </div>
+      <p class="mt-6 text-bone-400 text-sm">{business.antennaRates.note} Materials quoted on site.</p>
+    </Container>
+  </section>
+
+  <!-- NEARBY -->
+  {nearbyTowns.length > 0 && (
+    <section class="py-20 border-b border-ink-800">
+      <Container>
+        <SectionHeading eyebrow="NEARBY" title={`Other towns we cover near ${town.name}.`} />
+        <div class="mt-12 grid sm:grid-cols-2 md:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+          {nearbyTowns.map((t) => (
+            <a href={`/areas/${t.slug}`} class="group bg-ink-950 p-5 hover:bg-ink-900 transition-colors flex flex-col justify-between min-h-[120px]">
+              <div>
+                <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">{t.postcode}</p>
+                <h3 class="mt-1 text-xl font-bold">{t.name}</h3>
+              </div>
+              <span class="mt-4 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">All services →</span>
+            </a>
+          ))}
+        </div>
+        <p class="mt-6 text-bone-400 text-sm"><a href="/areas" class="text-spark-500 font-semibold hover:text-spark-600">See every Gippsland town we cover →</a></p>
+      </Container>
+    </section>
+  )}
+
+  <!-- FINAL CTA -->
+  <section class="py-20 bg-spark-500 text-ink-950">
+    <Container class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div>
+        <p class="text-ink-950/70 tracking-[0.3em] text-xs font-bold">BOOK A {town.name.toUpperCase()} JOB</p>
+        <h2 class="mt-3 text-3xl md:text-5xl font-extrabold tracking-tight">Need us in {town.name}?</h2>
+        <p class="mt-3 text-ink-950/80 max-w-xl">Tell us what's going on — single-trade job or multi-trade fitout, residential or commercial. We'll come back with a quote, or roll a van out same-day if we can.</p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href={`/contact?town=${town.slug}#quote-form`} class="inline-flex items-center justify-center px-6 py-4 bg-ink-950 text-spark-500 font-bold tracking-wide uppercase text-sm hover:bg-ink-900 transition-colors">Request a quote →</a>
+        <a href={`tel:${business.phone.tel}`} class="text-center text-ink-950 font-semibold underline whitespace-nowrap">or call {business.phone.display}</a>
+      </div>
+    </Container>
+  </section>
+</Base>

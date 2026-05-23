@@ -1,0 +1,48 @@
+---
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+import { towns } from "../../data/towns";
+
+export const prerender = true;
+
+// Group by region for the listing.
+const regions = ["Wellington Shire", "90 Mile Beach", "East Gippsland", "Latrobe Valley", "South Gippsland"];
+const grouped = regions.map((r) => ({
+  region: r,
+  towns: towns.filter((t) => t.region === r),
+}));
+---
+<Base title="Service Areas — Goodall Electrical | Every town we cover in Gippsland" description="Goodall Electrical services every town in Gippsland — Sale, Maffra, Bairnsdale, Traralgon, Morwell, Wonthaggi, the 90 Mile Beach coast and surrounding rural blocks. Browse by town.">
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-24">
+      <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">SERVICE AREAS</p>
+      <h1 class="mt-3 text-5xl md:text-7xl font-extrabold tracking-tight leading-[1]">Every town in<br /><span class="text-spark-500">Gippsland.</span></h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        From Sale to Bairnsdale, Loch Sport to Yarram, Traralgon to Maffra — if you're in the region, we cover you. Pick your town for everything we offer there.
+      </p>
+    </Container>
+  </section>
+
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      {grouped.map((group) => (
+        <div class="mb-16 last:mb-0">
+          <SectionHeading eyebrow="REGION" title={group.region} />
+          <div class="mt-8 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-ink-700 border border-ink-700">
+            {group.towns.map((t) => (
+              <a href={`/areas/${t.slug}`} class="group bg-ink-950 p-5 hover:bg-ink-900 transition-colors flex flex-col justify-between min-h-[120px]">
+                <div>
+                  <p class="text-spark-500 text-xs font-bold tracking-[0.2em] uppercase">{t.postcode}</p>
+                  <h3 class="mt-1 text-xl font-bold">{t.name}</h3>
+                </div>
+                <span class="mt-4 text-spark-500 text-sm font-semibold group-hover:translate-x-1 transition-transform">All services in {t.name} →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </Container>
+  </section>
+</Base>

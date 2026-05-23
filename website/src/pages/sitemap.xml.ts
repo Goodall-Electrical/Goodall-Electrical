@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { antennaTowns } from "../data/antenna-towns";
 import { electricalTowns } from "../data/electrical-towns";
+import { towns } from "../data/towns";
 
 export const prerender = false;
 
@@ -31,6 +32,7 @@ export const GET: APIRoute = async ({ site }) => {
     { loc: `${origin}/services/communications/`,        lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/services/antennas/`,              lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/projects/`,      lastmod: now, priority: 0.7, changefreq: "monthly" },
+    { loc: `${origin}/areas/`,         lastmod: now, priority: 0.8, changefreq: "monthly" },
     { loc: `${origin}/blog/`,          lastmod: now, priority: 0.8, changefreq: "weekly"  },
     { loc: `${origin}/about/`,         lastmod: now, priority: 0.6, changefreq: "monthly" },
     { loc: `${origin}/testimonials/`,  lastmod: now, priority: 0.6, changefreq: "monthly" },
@@ -65,6 +67,16 @@ export const GET: APIRoute = async ({ site }) => {
       loc: `${origin}/projects/${p.data.slug}/`,
       lastmod: now,
       priority: 0.7,
+      changefreq: "monthly",
+    });
+  }
+
+  // Per-town hub pages
+  for (const t of towns) {
+    urls.push({
+      loc: `${origin}/areas/${t.slug}/`,
+      lastmod: now,
+      priority: 0.8,
       changefreq: "monthly",
     });
   }
