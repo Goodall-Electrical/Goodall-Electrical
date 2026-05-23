@@ -2,8 +2,15 @@ import { test, expect } from "@playwright/test";
 
 test("quote form has all required fields and accepts focus", async ({ page }) => {
   await page.goto("/quote");
-  for (const name of ["name", "email", "phone", "siteAddress", "description"]) {
-    const field = page.locator(`[name="${name}"]`);
+  const fields: [string, string][] = [
+    ["name", "input"],
+    ["email", "input"],
+    ["phone", "input"],
+    ["siteAddress", "input"],
+    ["description", "textarea"],
+  ];
+  for (const [name, tag] of fields) {
+    const field = page.locator(`${tag}[name="${name}"]`);
     await expect(field).toBeVisible();
     await field.focus();
   }
