@@ -1,0 +1,46 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeading from "../../components/ui/SectionHeading.astro";
+
+export const prerender = true;
+
+const posts = (await getCollection("posts"))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+const dateFmt = new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "long", year: "numeric" });
+---
+<Base title="Articles & Guides — Goodall Electrical" description="Honest guides on residential electrical, antennas, AV and venue work in Gippsland. Written by the team that does the jobs.">
+  <section class="relative overflow-hidden border-b border-ink-800">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-spark-500)_0%,_transparent_50%)] opacity-10"></div>
+    <Container class="relative py-20 md:py-24">
+      <p class="text-spark-500 tracking-[0.3em] text-xs font-bold">ARTICLES & GUIDES</p>
+      <h1 class="mt-3 text-5xl md:text-7xl font-extrabold tracking-tight leading-[1]">Honest answers,<br /><span class="text-spark-500">not sales pitches.</span></h1>
+      <p class="mt-6 text-bone-200 max-w-2xl text-lg md:text-xl">
+        Written by the team on the tools. If you've ever wondered why your TV is pixelating, what a switchboard upgrade actually costs, or whether to repair or replace — start here.
+      </p>
+    </Container>
+  </section>
+
+  <section class="py-20 border-b border-ink-800">
+    <Container>
+      <SectionHeading eyebrow="LATEST" title={`${posts.length} ${posts.length === 1 ? "article" : "articles"}`} />
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((p) => (
+          <a href={`/blog/${p.data.slug}`} class="group flex flex-col bg-ink-900 border border-ink-800 hover:border-spark-500 transition-colors">
+            <div class="p-6 md:p-8 flex flex-col flex-1">
+              <p class="text-spark-500 text-xs font-bold tracking-[0.25em] uppercase">{p.data.category}</p>
+              <h2 class="mt-4 text-xl md:text-2xl font-extrabold tracking-tight leading-snug group-hover:text-spark-500 transition-colors">{p.data.title}</h2>
+              <p class="mt-3 text-bone-200 text-sm leading-relaxed flex-1">{p.data.description}</p>
+              <div class="mt-6 flex items-center justify-between text-xs text-bone-400">
+                <span>{dateFmt.format(p.data.publishedAt)}</span>
+                {p.data.readingMinutes && <span>{p.data.readingMinutes} min read</span>}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </Container>
+  </section>
+</Base>

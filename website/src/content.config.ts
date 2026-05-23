@@ -38,4 +38,19 @@ const testimonials = defineCollection({
   }),
 });
 
-export const collections = { services, projects, testimonials };
+const posts = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string(),
+    description: z.string(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    category: z.enum(["Antennas", "Electrical", "AV", "Guides"]),
+    featured: z.boolean().default(false),
+    heroImage: z.string().optional(),
+    readingMinutes: z.number().optional(),
+  }),
+});
+
+export const collections = { services, projects, testimonials, posts };

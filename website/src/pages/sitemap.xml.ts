@@ -20,6 +20,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   const services = await getCollection("services");
   const projects = await getCollection("projects");
+  const posts = await getCollection("posts");
 
   const urls: Url[] = [
     { loc: `${origin}/`,               lastmod: now, priority: 1.0, changefreq: "weekly"  },
@@ -30,6 +31,7 @@ export const GET: APIRoute = async ({ site }) => {
     { loc: `${origin}/services/communications/`,        lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/services/antennas/`,              lastmod: now, priority: 0.9, changefreq: "monthly" },
     { loc: `${origin}/projects/`,      lastmod: now, priority: 0.7, changefreq: "monthly" },
+    { loc: `${origin}/blog/`,          lastmod: now, priority: 0.8, changefreq: "weekly"  },
     { loc: `${origin}/about/`,         lastmod: now, priority: 0.6, changefreq: "monthly" },
     { loc: `${origin}/testimonials/`,  lastmod: now, priority: 0.6, changefreq: "monthly" },
     { loc: `${origin}/contact/`,       lastmod: now, priority: 0.8, changefreq: "monthly" },
@@ -83,6 +85,17 @@ export const GET: APIRoute = async ({ site }) => {
       loc: `${origin}/services/electrical/${t.slug}/`,
       lastmod: now,
       priority: 0.8,
+      changefreq: "monthly",
+    });
+  }
+
+  // Blog posts — use the post's own publishedAt/updatedAt for lastmod.
+  for (const p of posts) {
+    const lastmod = (p.data.updatedAt ?? p.data.publishedAt).toISOString();
+    urls.push({
+      loc: `${origin}/blog/${p.data.slug}/`,
+      lastmod,
+      priority: p.data.featured ? 0.8 : 0.6,
       changefreq: "monthly",
     });
   }
